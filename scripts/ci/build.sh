@@ -58,7 +58,8 @@ echo "## CC2 version test"
 python -c "import ConsensusCore2 ; print ConsensusCore2.__version__"
 
 echo "## test CC2 via GC"
-make check
+nosetests --verbose --with-xunit --xunit-file=nosetests.xml --with-coverage --cover-xml --cover-xml-file=coverage.xml tests/unit
+sed -i -e 's@filename="@filename="./@g' coverage.xml
 
 set +u
 deactivate
