@@ -103,8 +103,8 @@ class Variant(CommonEqualityMixin):
              self.refId,
              self.refStart,
              self.refEnd,
-             self.refPrev + refSeq_,
-             self.readPrev + readAlleles)
+             refSeq_,
+             readAlleles)
 
     def __repr__(self):
         return str(self)

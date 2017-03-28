@@ -28,8 +28,8 @@ I'm not all that surprised.
   $ cat v.vcf | tr '\t' ' '
   ##fileformat=VCFv4.3
   ##fileDate=* (glob)
-  ##source=GenomicConsensusV2.1.0
-  ##reference=file:///Users/lhepler/PacBio/2017/03/27.sat765/GenomicConsensus/tests/data/hcv/HCV_Ref_For_187140.fasta
+  ##source=GenomicConsensusV* (glob)
+  ##reference=file://* (glob)
   ##contig=<ID=5primeEnd,length=156>
   ##contig=<ID=3primeEnd,length=386>
   #CHROM POS ID REF ALT QUAL FILTER INFO
