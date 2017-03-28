@@ -6,11 +6,12 @@ Bite-sized quiver test using an All4Mers template!
 
 Run quiver.
 
-  $ plurality $INPUT -r $REFERENCE -o v.gff -o css.fa -o css.fq
+  $ plurality $INPUT -r $REFERENCE -o v.gff -o v.vcf -o css.fa -o css.fq
 
 No variants!
 
   $ egrep -v '^#' v.gff | cat
+  $ egrep -v '^#' v.vcf | cat
 
 Perfect consensus, no no-calls.
 

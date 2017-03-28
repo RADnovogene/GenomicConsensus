@@ -89,6 +89,7 @@ def fileFormat(filename):
     if   ext in [".fa", ".fasta"]: return "FASTA"
     elif ext in [".fq", ".fastq"]: return "FASTQ"
     elif ext in [".gff" ]:         return "GFF"
+    elif ext in [".vcf" ]:         return "VCF"
     elif ext in [".csv" ]:         return "CSV"
     else: raise Exception, "Unrecognized file format"
 

@@ -45,7 +45,8 @@ def test_computeHaploidVariants():
                                  [3]*7,
                                  [35]*7)
     assert_equal([ Variant(1, 3, 4, "T", "G",
-                           coverage=4, confidence=35, frequency1=3) ],
+                           coverage=4, confidence=35, frequency1=3,
+                           refPrev="T", readPrev="T") ],
                  variants1)
 
     variants2 = _computeVariants(config,
@@ -56,7 +57,8 @@ def test_computeHaploidVariants():
                                  [3]*7,
                                  [35]*7)
     assert_equal([ Variant(1, 2, 3, "T", "",
-                           coverage=4, confidence=35, frequency1=3)],
+                           coverage=4, confidence=35, frequency1=3,
+                           refPrev="A", readPrev="A")],
                  variants2)
 
     variants3 = _computeVariants(config,
@@ -67,7 +69,8 @@ def test_computeHaploidVariants():
                                  [3]*7,
                                  [35]*7)
     assert_equal([ Variant(1, 2, 2, "", "T",
-                           coverage=4, confidence=35, frequency1=3)],
+                           coverage=4, confidence=35, frequency1=3,
+                           refPrev="A", readPrev="A")],
                  variants3)
 
 

@@ -37,6 +37,7 @@ from collections import OrderedDict, defaultdict
 from .options import options
 from GenomicConsensus import reference, consensus, utils, windows
 from .io.VariantsGffWriter import VariantsGffWriter
+from .io.VariantsVcfWriter import VariantsVcfWriter
 from pbcore.io import FastaWriter, FastqWriter
 
 class ResultCollector(object):
@@ -84,13 +85,20 @@ class ResultCollector(object):
         self.consensusChunksByRefId      = defaultdict(list)
 
         # open file writers
-        self.fastaWriter = self.fastqWriter = self.gffWriter = None
+        self.fastaWriter = None
+        self.fastqWriter = None
+        self.gffWriter   = None
+        self.vcfWriter   = None
         if options.fastaOutputFilename:
             self.fastaWriter = FastaWriter(options.fastaOutputFilename)
         if options.fastqOutputFilename:
             self.fastqWriter = FastqWriter(options.fastqOutputFilename)
         if options.gffOutputFilename:
             self.gffWriter = VariantsGffWriter(options.gffOutputFilename,
+                                               vars(options),
+                                               reference.byName.values())
+        if options.vcfOutputFilename:
+            self.vcfWriter = VariantsVcfWriter(options.vcfOutputFilename,
                                                vars(options),
                                                reference.byName.values())
 
@@ -105,6 +113,7 @@ class ResultCollector(object):
         if self.fastaWriter: self.fastaWriter.close()
         if self.fastqWriter: self.fastqWriter.close()
         if self.gffWriter:   self.gffWriter.close()
+        if self.vcfWriter:   self.vcfWriter.close()
         logging.info("Output files completed.")
 
     def _recordNewResults(self, window, css, variants):
@@ -122,8 +131,12 @@ class ResultCollector(object):
         if basesProcessed == requiredBases:
             # This contig is done, so we can dump to file and delete
             # the data structures.
-            if self.gffWriter:
-                self.gffWriter.writeVariants(sorted(self.variantsByRefId[refId]))
+            if self.gffWriter or self.vcfWriter:
+                variants = sorted(self.variantsByRefId[refId])
+                if self.gffWriter:
+                    self.gffWriter.writeVariants(variants)
+                if self.vcfWriter:
+                    self.vcfWriter.writeVariants(variants)
             del self.variantsByRefId[refId]
 
             #

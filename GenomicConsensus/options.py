@@ -116,6 +116,10 @@ def get_parser():
         name="Variant Calls",
         description="List of variants from the reference",
         default_name="variants")
+    tcp.add_output_file_type(FileTypes.VCF, "variants_vcf",
+        name="Variant Calls",
+        description="List of variants from the reference in VCF format",
+        default_name="variants")
     tcp.add_output_file_type(FileTypes.DS_CONTIG, "consensus",
         name="Consensus Contigs",
         description="Consensus contigs dataset",
@@ -137,7 +141,7 @@ def get_parser():
         default=Constants.DEFAULT_MIN_CONFIDENCE,
         name="Minimum confidence",
         description="The minimum confidence for a variant call to be output "+\
-                    "to variants.gff")
+                    "to variants.{gff,vcf}")
     tcp.add_int(
         option_id=Constants.MIN_COVERAGE_ID,
         option_str="minCoverage",
@@ -180,7 +184,7 @@ def add_options_to_argument_parser(parser):
         action="append",
         default=[],
         help="The output filename(s), as a comma-separated list." + \
-             "Valid output formats are .fa/.fasta, .fq/.fastq, .gff")
+             "Valid output formats are .fa/.fasta, .fq/.fastq, .gff, .vcf")
 
     parallelism = parser.add_argument_group("Parallelism")
     parallelism.add_argument(
@@ -197,7 +201,7 @@ def add_options_to_argument_parser(parser):
         dest="minConfidence",
         type=int,
         default=Constants.DEFAULT_MIN_CONFIDENCE,
-        help="The minimum confidence for a variant call to be output to variants.gff")
+        help="The minimum confidence for a variant call to be output to variants.{gff,vcf}")
     filtering.add_argument(
         "--minCoverage", "-x",
         action="store",
@@ -471,6 +475,7 @@ def processOptions():
             parser.error("Output file %s cannot be written." % (path,))
 
     options.gffOutputFilename   = None
+    options.vcfOutputFilename   = None
     options.fastaOutputFilename = None
     options.fastqOutputFilename = None
     options.csvOutputFilename   = None
@@ -479,6 +484,7 @@ def processOptions():
     for outputFilename in options.outputFilenames:
         fmt = fileFormat(outputFilename)
         if   fmt == "GFF":   options.gffOutputFilename   = outputFilename
+        elif fmt == "VCF":   options.vcfOutputFilename   = outputFilename
         elif fmt == "FASTA": options.fastaOutputFilename = outputFilename
         elif fmt == "FASTQ": options.fastqOutputFilename = outputFilename
         elif fmt == "CSV":   options.csvOutputFilename   = outputFilename

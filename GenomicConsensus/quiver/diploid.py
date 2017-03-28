@@ -182,6 +182,13 @@ def variantsFromAlignment(refWindow, refSeq, cssSeq,
                    for (X, T, Q) in zip(aln.Transcript(),
                                         alnTarget,
                                         alnQuery) ]
+
+    def findPrev(s, pos):
+        for i in xrange(pos - 1, -1, -1):
+            if s[i] != '-':
+                return s[i]
+        return "N"
+
     variants = []
     runStart = -1
     runStartRefPos = None
@@ -195,11 +202,15 @@ def variantsFromAlignment(refWindow, refSeq, cssSeq,
                 # Package up the run and dump a variant
                 ref  = alnTarget[runStart:pos].replace("-", "")
                 read = alnQuery [runStart:pos].replace("-", "")
+                refPrev = findPrev(alnTarget, runStart)
+                cssPrev = findPrev(alnQuery, runStart)
                 if isHeterozygote(read):
                     allele1, allele2 = unpackIUPAC(read)
-                    var = Variant(refId, runStartRefPos, refPos, ref, allele1, allele2)
+                    var = Variant(refId, runStartRefPos, refPos, ref, allele1, allele2,
+                                  refPrev=refPrev, readPrev=cssPrev)
                 else:
-                    var = Variant(refId, runStartRefPos, refPos, ref, read)
+                    var = Variant(refId, runStartRefPos, refPos, ref, read,
+                                  refPrev=refPrev, readPrev=cssPrev)
                 variants.append(var)
             runStart = pos
             runStartRefPos = refPos
