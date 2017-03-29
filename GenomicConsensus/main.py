@@ -385,9 +385,10 @@ def resolved_tool_contract_runner(resolved_contract):
     alignment_path = rc.task.input_files[0]
     reference_path = rc.task.input_files[1]
     gff_path = rc.task.output_files[0]
-    dataset_path = rc.task.output_files[1]
+    vcf_path = rc.task.output_files[1]
+    dataset_path = rc.task.output_files[2]
     fasta_path = re.sub(".contigset.xml", ".fasta", dataset_path)
-    fastq_path = rc.task.output_files[2]
+    fastq_path = rc.task.output_files[3]
     args = [
         alignment_path,
         "--verbose",
@@ -395,6 +396,7 @@ def resolved_tool_contract_runner(resolved_contract):
         "--outputFilename", gff_path,
         "--outputFilename", fasta_path,
         "--outputFilename", fastq_path,
+        "--outputFilename", vcf_path,
         "--numWorkers", str(rc.task.nproc),
         "--minCoverage", str(rc.task.options[Constants.MIN_COVERAGE_ID]),
         "--minConfidence", str(rc.task.options[Constants.MIN_CONFIDENCE_ID]),
