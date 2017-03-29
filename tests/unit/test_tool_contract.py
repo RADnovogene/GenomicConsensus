@@ -60,6 +60,19 @@ class TestGffToBed(pbcommand.testkit.PbTestApp):
     }
 
 
+class TestGffToVcf(pbcommand.testkit.PbTestApp):
+    DRIVER_BASE = "gffToVcf"
+    DRIVER_EMIT = DRIVER_BASE + " --emit-tool-contract "
+    DRIVER_RESOLVE = DRIVER_BASE + " --resolved-tool-contract "
+    REQUIRES_PBCORE = True
+    INPUT_FILES = [
+        os.path.join(DATA_DIR, "converters", "variants.gff.gz"),
+    ]
+    TASK_OPTIONS = {
+        "genomic_consensus.task_options.global_reference": "Staphylococcus_aureus_USA300_TCH1516",
+    }
+
+
 class TestSummarizeConsensus(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "summarizeConsensus"
     DRIVER_EMIT = DRIVER_BASE + " --emit-tool-contract "

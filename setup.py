@@ -17,6 +17,7 @@ setup(
     license=open('LICENSES').read(),
     scripts = ['bin/variantCaller',
                'bin/summarizeConsensus',
+               'bin/gffToVcf',
                'bin/gffToBed',
                'bin/plurality',
                'bin/poa',
