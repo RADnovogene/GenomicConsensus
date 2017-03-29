@@ -53,7 +53,12 @@ class Variant(CommonEqualityMixin):
     """
     def __init__(self, refId, refStart, refEnd, refSeq, readSeq1,
                  readSeq2=None, confidence=None, coverage=None,
-                 frequency1=None, frequency2=None, annotations=None):
+                 frequency1=None, frequency2=None, annotations=None,
+                 refPrev=None, readPrev=None):
+        if refPrev is None:
+            raise ValueError("missing refPrev!")
+        if readPrev is None:
+            raise ValueError("missing readPrev!")
         self.refId       = refId
         self.refStart    = refStart
         self.refEnd      = refEnd
@@ -65,6 +70,8 @@ class Variant(CommonEqualityMixin):
         self.frequency1  = frequency1
         self.frequency2  = frequency2
         self.annotations = annotations
+        self.refPrev     = refPrev
+        self.readPrev    = readPrev
 
     @property
     def isHeterozygous(self):

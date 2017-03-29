@@ -6,7 +6,7 @@ Bite-sized quiver test using an All4Mers template!
 
 Run arrow.
 
-  $ arrow $INPUT -r $REFERENCE -o v.gff -o css.fa -o css.fq
+  $ arrow $INPUT -r $REFERENCE -o v.gff -o v.vcf -o css.fa -o css.fq
 
 No consensus, alignment was empty
 

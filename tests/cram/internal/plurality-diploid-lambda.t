@@ -3,7 +3,7 @@ Reads are from a simulated diploid lambda, where there is a SNP at
 each position 250 + 500k, and the SNP is a substitution "ACGT" ->
 "CGTA".  How well do we pick up these SNPs?
 
-  $ alias untabify="sed 's/\t/ /g'"
+  $ alias untabify="tr '\t' ' '"
   $ export INPUT=/mnt/secondary/Share/Quiver/TestData/lambdaDiploid/aln.cmp.h5
   $ export REFERENCE=/mnt/secondary/Share/Quiver/TestData/lambdaDiploid/lambda.fasta
   $ export EXPECTED_VARIANTS=/mnt/secondary/Share/Quiver/TestData/lambdaDiploid/v-expected.gff
@@ -16,7 +16,7 @@ Run haploid analysis, make sure we don't make too many miscalls!
 Now run under diploid mode
 
   $ plurality --diploid $INPUT -r $REFERENCE \
-  > -o variants.gff -o css.fasta
+  > -o variants.gff -o variants.vcf -o css.fasta
 
 Consensus outputs should be identical, because detection of diploid
 variants doesn't change the cconsensus calls.
@@ -30,6 +30,10 @@ Take a look at the variants...
   lambda_NEB3011 . substitution 750 750 . . . reference=T;variantSeq=T/A;frequency=60/27;coverage=100;confidence=40
   lambda_NEB3011 . substitution 1250 1250 . . . reference=G;variantSeq=G/T;frequency=56/21;coverage=100;confidence=40
 
+  $ grep -v "#" variants.vcf | head -3 | untabify
+  lambda_NEB3011 250 . A C,A 40 PASS DP=100;AF=0.511,0.489
+  lambda_NEB3011 750 . T T,A 40 PASS DP=100;AF=0.69,0.31
+  lambda_NEB3011 1250 . G G,T 40 PASS DP=100;AF=0.727,0.273
 
 Use gffsubtract.pl to compare variants to expected.  Note that the
 gffsubtract tool just looks at the coordinates, not the actual content
