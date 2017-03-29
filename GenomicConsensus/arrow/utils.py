@@ -397,7 +397,7 @@ def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None
 
     # Load the mapped reads into the mutation scorer, and iterate
     # until convergence.
-    ai = cc.MultiMolecularIntegrator(draft, cc.IntegratorConfig(arrowConfig.minZScore))
+    ai = cc.Integrator(draft, cc.IntegratorConfig(arrowConfig.minZScore))
     coverage = 0
     for i, mr in enumerate(mappedReads):
         if (mr.TemplateEnd <= mr.TemplateStart or
