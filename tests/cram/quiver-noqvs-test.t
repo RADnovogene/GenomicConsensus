@@ -9,9 +9,9 @@ Quiver actually makes one error here, which is kind of disappointing,
 but this data is from a really ancient instrument-software version, so
 I'm not all that surprised.
 
-  $ quiver -pC2.NoQVsModel -x0 -q0 $INPUT -r $REFERENCE -o v.gff -o css.fa -o css.fq
+  $ quiver -pC2.NoQVsModel -x0 -q0 $INPUT -r $REFERENCE -o v.gff -o v.vcf -o css.fa -o css.fq
 
-  $ cat v.gff
+  $ cat v.gff | tr '\t' ' '
   ##gff-version 3
   ##pacbio-variant-version 2.1
   ##date * (glob)
@@ -22,9 +22,19 @@ I'm not all that surprised.
   ##source-reference-file * (glob)
   ##sequence-region 5primeEnd 1 156
   ##sequence-region 3primeEnd 1 386
-  3primeEnd\t.\tdeletion\t296\t296\t.\t.\t.\treference=G;variantSeq=.;coverage=92;confidence=4 (esc)
-  3primeEnd\t.\tdeletion\t369\t369\t.\t.\t.\treference=G;variantSeq=.;coverage=83;confidence=6 (esc)
+  3primeEnd . deletion 296 296 . . . reference=G;variantSeq=.;coverage=92;confidence=4
+  3primeEnd . deletion 369 369 . . . reference=G;variantSeq=.;coverage=83;confidence=6
 
+  $ cat v.vcf | tr '\t' ' '
+  ##fileformat=VCFv4.3
+  ##fileDate=* (glob)
+  ##source=GenomicConsensusV* (glob)
+  ##reference=file://* (glob)
+  ##contig=<ID=5primeEnd,length=156>
+  ##contig=<ID=3primeEnd,length=386>
+  #CHROM POS ID REF ALT QUAL FILTER INFO
+  3primeEnd 295 . TG T 4 PASS DP=92
+  3primeEnd 368 . AG A 6 PASS DP=83
 
   $ cat css.fa
   >5primeEnd|quiver

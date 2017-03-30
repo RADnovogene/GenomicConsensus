@@ -161,6 +161,10 @@ def variantsFromAlignment(a, refWindow, cssQvInWindow=None, siteCoverage=None, e
     grouper = lambda row: "N" if (row[1]=="N" or row[2]=="N") else row[0]
     runs = itertools.groupby(tbl, grouper)
 
+    # track predecessor "anchor" base for vcf output of indel variants
+    refPrev = "N"
+    cssPrev = "N"
+
     for code, run in runs:
         assert code in "RIDMN"
         run = list(run)
@@ -174,11 +178,14 @@ def variantsFromAlignment(a, refWindow, cssQvInWindow=None, siteCoverage=None, e
             pass
         elif code == "R":
             assert len(css)==len(ref)
-            variant = Variant(refId, refPos, refPos+len(css), ref, css)
+            variant = Variant(refId, refPos, refPos+len(css), ref, css,
+                              refPrev=refPrev, readPrev=cssPrev)
         elif code == "I":
-            variant = Variant(refId, refPos, refPos, "", css)
+            variant = Variant(refId, refPos, refPos, "", css,
+                              refPrev=refPrev, readPrev=cssPrev)
         elif code == "D":
-            variant = Variant(refId, refPos, refPos + len(ref), ref, "")
+            variant = Variant(refId, refPos, refPos + len(ref), ref, "",
+                              refPrev=refPrev, readPrev=cssPrev)
 
         if variant is not None:
             # HACK ALERT: variants at the first and last position
@@ -198,6 +205,10 @@ def variantsFromAlignment(a, refWindow, cssQvInWindow=None, siteCoverage=None, e
 
         refPos += refLen
         cssPos += cssLen
+        ref = ref.replace("-", "")
+        css = css.replace("-", "")
+        refPrev = ref[-1] if ref else refPrev
+        cssPrev = css[-1] if css else cssPrev
 
     return variants
 
@@ -386,7 +397,7 @@ def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None
 
     # Load the mapped reads into the mutation scorer, and iterate
     # until convergence.
-    ai = cc.MultiMolecularIntegrator(draft, cc.IntegratorConfig(arrowConfig.minZScore))
+    ai = cc.Integrator(draft, cc.IntegratorConfig(arrowConfig.minZScore))
     coverage = 0
     for i, mr in enumerate(mappedReads):
         if (mr.TemplateEnd <= mr.TemplateStart or

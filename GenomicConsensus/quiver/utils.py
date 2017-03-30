@@ -36,6 +36,7 @@ from collections import Counter
 from GenomicConsensus.variants import *
 from GenomicConsensus.utils import *
 from GenomicConsensus.consensus import QuiverConsensus
+from GenomicConsensus.arrow.utils import variantsFromAlignment
 from pbcore.io.rangeQueries import projectIntoRange
 import ConsensusCore as cc
 
@@ -171,58 +172,6 @@ def consensusConfidence(mms, positions=None):
     consensus (mms.Template()).
     """
     return np.array(cc.ConsensusQVs(mms), dtype=np.uint8)
-
-def variantsFromAlignment(a, refWindow, cssQvInWindow=None, siteCoverage=None):
-    """
-    Extract the variants implied by a pairwise alignment to the
-    reference.
-    """
-    variants = []
-    refId, refStart, _ = refWindow
-    refPos = refStart
-    cssPos = 0
-    tbl = zip(a.Transcript(),
-              a.Target(),
-              a.Query())
-
-    # We don't call variants where either the reference or css is 'N'
-    grouper = lambda row: "N" if (row[1]=="N" or row[2]=="N") else row[0]
-    runs = itertools.groupby(tbl, grouper)
-
-    for code, run in runs:
-        assert code in "RIDMN"
-        run = list(run)
-        ref = "".join(map(snd, run))
-        refLen = len(ref) - Counter(ref)["-"]
-        css = "".join(map(third, run))
-        cssLen = len(css) - Counter(css)["-"]
-        variant = None
-
-        if code == "M" or code == "N":
-            pass
-        elif code == "R":
-            assert len(css)==len(ref)
-            variant = Variant(refId, refPos, refPos+len(css), ref, css)
-        elif code == "I":
-            variant = Variant(refId, refPos, refPos, "", css)
-        elif code == "D":
-            variant = Variant(refId, refPos, refPos + len(ref), ref, "")
-
-        if variant is not None:
-            # HACK ALERT: variants at the first and last position
-            # are not handled correctly
-            if siteCoverage is not None and np.size(siteCoverage) > 0:
-                refPos_ = min(refPos-refStart, len(siteCoverage)-1)
-                variant.coverage = siteCoverage[refPos_]
-            if cssQvInWindow is not None and np.size(cssQvInWindow) > 0:
-                cssPos_ = min(cssPos, len(cssQvInWindow)-1)
-                variant.confidence = cssQvInWindow[cssPos_]
-            variants.append(variant)
-
-        refPos += refLen
-        cssPos += cssLen
-
-    return variants
 
 def referenceSpanWithinWindow(referenceWindow, aln):
     """

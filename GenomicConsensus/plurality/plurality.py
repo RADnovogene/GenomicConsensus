@@ -240,6 +240,10 @@ def _computeVariants(config,
         assert len(alternateAlleleArray) == windowSize
         assert len(alternateAlleleFrequency) == windowSize
 
+    # these are predecessor anchors, to support VCF output
+    refPrev = "N"
+    cssPrev = "N"
+
     vars = []
     for j in xrange(windowSize):
         refPos = j + refStart
@@ -266,7 +270,8 @@ def _computeVariants(config,
                 vs = varsFromRefAndReads(refId, refPos, refBase,
                                          cssBases, altBases,
                                          confidence=hetConf, coverage=cov,
-                                         frequency1=cssFreq, frequency2=altFreq)
+                                         frequency1=cssFreq, frequency2=altFreq,
+                                         refPrev=refPrev, readPrev=cssPrev)
                 vars = vars + vs
 
         else:
@@ -281,8 +286,13 @@ def _computeVariants(config,
 
                 vs = varsFromRefAndRead(refId, refPos, refBase, cssBases,
                                         confidence=conf, coverage=cov,
-                                        frequency1=cssFreq)
+                                        frequency1=cssFreq,
+                                        refPrev=refPrev, readPrev=cssPrev)
                 vars = vars + vs
+
+        # if we have ref or css bases, update the anchors
+        refPrev = refBase if refBase else refPrev
+        cssPrev = cssBases[-1] if cssBases else cssPrev
 
     if config.diploid:
         vars = filter(_isSameLengthVariant, vars)
