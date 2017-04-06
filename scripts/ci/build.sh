@@ -29,8 +29,13 @@ $PIP install --user \
   $NX3PBASEURL/pythonpkgs/tabulate-0.7.5-cp27-none-any.whl \
   cram \
   coverage
-ln -sfn ../data _deps/PacBioTestData/pbtestdata/data
-$PIP install --user -e _deps/PacBioTestData
+if [ ! -d _deps/pacbiotestdata ]; then
+  ( cd _deps && git clone ssh://git@bitbucket.nanofluidics.com:7999/sat/pacbiotestdata.git )
+else
+  ( cd _deps/pacbiotestdata && git checkout . && git clean -xdf )
+fi
+ln -sfn ../data _deps/pacbiotestdata/pbtestdata/data
+$PIP install --user -e _deps/pacbiotestdata
 $PIP install --user -e _deps/pbcore
 $PIP install --user -e _deps/pbcommand
 
