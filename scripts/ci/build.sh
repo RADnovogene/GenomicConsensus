@@ -73,5 +73,7 @@ echo "## CC2 version test"
 python -c "import ConsensusCore2 ; print ConsensusCore2.__version__"
 
 echo "## test CC2 via GC"
-nosetests --verbose --with-xunit --xunit-file=nosetests.xml --with-coverage --cover-xml --cover-xml-file=coverage.xml tests/unit
+#nosetests --verbose --with-xunit --xunit-file=nosetests.xml --with-coverage --cover-xml --cover-xml-file=coverage.xml tests/unit
+coverage run --source GenomicConsensus -m py.test --verbose --junit-xml=nosetests.xml tests/unit
+coverage xml -o coverage.xml
 sed -i -e 's@filename="@filename="./@g' coverage.xml
