@@ -3,55 +3,65 @@ set -euo pipefail
 
 echo "# DEPENDENCIES"
 echo "## Load modules"
-source /mnt/software/Modules/current/init/bash
-module load git gcc/5.3.0 python/2.7.10 cmake cram swig ccache virtualenv zlib/1.2.5 ninja boost
+type module >& /dev/null || . /mnt/software/Modules/current/init/bash
+module load git/2.8.3
+module load gcc/4.9.2
+module load cmake ninja
+module load swig ccache boost
+CXX="$CXX -static-libstdc++"
+GXX="$CXX"
+export CXX GXX
 
-echo "## Get into virtualenv"
-if [ ! -d venv ]
-then
-    /mnt/software/v/virtualenv/13.0.1/virtualenv.py venv
-fi
-set +u
-source venv/bin/activate
-set -u
+echo "## Use PYTHONUSERBASE in lieu of virtualenv"
+export PATH=$PWD/build/bin:/mnt/software/a/anaconda2/4.2.0/bin:$PATH
+export PYTHONUSERBASE=$PWD/build
+# pip 9 create some problem with egg style install
+PIP="pip --cache-dir=$PWD/.pip --disable-pip-version-check"
 
 echo "## Install pip modules"
-pip install --upgrade pip
-pip install numpy cython h5py pysam cram nose jsonschema avro
-pip install --no-deps git+https://github.com/PacificBiosciences/pbcommand.git
-pip install --no-deps git+https://github.com/PacificBiosciences/pbcore.git
-pip install coverage
+NX3PBASEURL=http://nexus/repository/maven-thirdparty/gcc-4.9.2
+NXSABASEURL=http://nexus/repository/maven-snapshots/pacbio/sat
+$PIP install --user \
+  $NX3PBASEURL/pythonpkgs/pysam-0.9.1.4-cp27-cp27mu-linux_x86_64.whl \
+  $NX3PBASEURL/pythonpkgs/xmlbuilder-1.0-cp27-none-any.whl \
+  $NX3PBASEURL/pythonpkgs/avro-1.7.7-cp27-none-any.whl \
+  iso8601 \
+  $NX3PBASEURL/pythonpkgs/tabulate-0.7.5-cp27-none-any.whl \
+  cram \
+  coverage
+ln -sfn ../data _deps/PacBioTestData/pbtestdata/data
+$PIP install --user -e _deps/PacBioTestData
+$PIP install --user -e _deps/pbcore
+$PIP install --user -e _deps/pbcommand
 
 echo "## Get external dependencies"
-if [ ! -d _deps ] ; then mkdir _deps ; fi
+curl -s -L $NX3PBASEURL/zlib-1.2.8.tgz                 | tar zxf - -C build
+curl -s -L $NXSABASEURL/htslib/htslib-1.1-SNAPSHOT.tgz | tar zxf - -C build
 
-echo "### Get PacBioTestData"
-if [ ! -d _deps/PacBioTestData ]
-then
-    ( cd _deps                                                         &&\
-    git clone https://github.com/PacificBiosciences/PacBioTestData.git &&\
-    cd PacBioTestData                                                  &&\
-    git lfs pull                                                       &&\
-    make python )
-fi
-
-echo "## Fetch unanimity submodules"
-# Bamboo's checkout of unanimity doesn't set the "origin" remote to
-# something meaningful, which means we can't resolve the relative
-# submodules.  Override the remote here.
-( cd _deps/unanimity &&
-  git remote set-url origin ssh://git@bitbucket.nanofluidics.com:7999/sat/unanimity.git &&
-  git submodule update --init --remote )
+echo "## Fetch unanimity \"submodules\""
+( cd _deps/unanimity \
+  && git checkout . \
+  && git clean -xdf \
+  && rm -rf third-party/seqan third-party/pbbam third-party/pbcopper \
+  && ln -sfn $PWD/../seqan    third-party/seqan \
+  && ln -sfn $PWD/../pbbam    third-party/pbbam \
+  && ln -sfn $PWD/../pbcopper third-party/pbcopper )
 
 echo "# BUILD"
 echo "## pip install CC2"
-( cd _deps/unanimity && CMAKE_BUILD_TYPE=ReleaseWithAssert CMAKE_COMMAND=cmake ZLIB_INCLUDE_DIR=/mnt/software/z/zlib/1.2.5/include ZLIB_LIBRARY=/mnt/software/z/zlib/1.2.5/lib/libz.so VERBOSE=1 pip install --verbose --upgrade --no-deps . )
+( cd _deps/unanimity \
+  && CMAKE_BUILD_TYPE=ReleaseWithAssert \
+     CMAKE_COMMAND=cmake \
+     ZLIB_INCLUDE_DIR=$PWD/../../build/include \
+     ZLIB_LIBRARY=$PWD/../../build/lib/libz.so \
+     VERBOSE=1 $PIP install --user --verbose -e . )
 
 echo "## install ConsensusCore"
-( cd _deps/ConsensusCore && python setup.py install --boost=$BOOST_ROOT )
+( cd _deps/ConsensusCore \
+  && python setup.py install --user --boost=$BOOST_ROOT )
 
 echo "## install GC"
-( pip install --upgrade --no-deps --verbose . )
+$PIP install --user --verbose -e .
 
 echo "# TEST"
 echo "## CC2 version test"
@@ -60,7 +70,3 @@ python -c "import ConsensusCore2 ; print ConsensusCore2.__version__"
 echo "## test CC2 via GC"
 nosetests --verbose --with-xunit --xunit-file=nosetests.xml --with-coverage --cover-xml --cover-xml-file=coverage.xml tests/unit
 sed -i -e 's@filename="@filename="./@g' coverage.xml
-
-set +u
-deactivate
-set -u
