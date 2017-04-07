@@ -6,7 +6,7 @@ develop:
 
 tests:
 	# Unit tests
-	nosetests --with-xunit tests/unit
+	py.test --junit-xml=nosetests.xml tests/unit
 	# End-to-end tests
 	PATH=`pwd`:$(PATH) cram --xunit-file=gc-cram.xml tests/cram/*.t
 
@@ -32,7 +32,7 @@ doc:
 clean:
 	-rm -rf dist/ build/ *.egg-info
 	-rm -rf doc/_build
-	-rm -f nosetests.xml
+	-rm -f nosetests.xml coverage.xml
 	-find . -name "*.pyc" | xargs rm -f
 
 tags:
