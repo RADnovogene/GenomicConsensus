@@ -57,7 +57,7 @@ echo "## pip install CC2"
      CMAKE_COMMAND=cmake \
      ZLIB_INCLUDE_DIR=$PWD/../../build/include \
      ZLIB_LIBRARY=$PWD/../../build/lib/libz.so \
-     VERBOSE=1 $PIP install --user --verbose -e . )
+     VERBOSE=1 $PIP install --user --verbose . )
 
 echo "## install ConsensusCore"
 ( cd _deps/ConsensusCore \
@@ -65,7 +65,7 @@ echo "## install ConsensusCore"
 # legacy project doesn't do pip well, have no interest in this project
 
 echo "## install GC"
-$PIP install --user --verbose -e .
+$PIP install --user --verbose .
 
 echo "# TEST"
 echo "## CC2 version test"
