@@ -7,15 +7,18 @@ type module >& /dev/null || . /mnt/software/Modules/current/init/bash
 module load git/2.8.3
 module load gcc/4.9.2
 module load cmake ninja
-module load swig ccache boost
+module load swig ccache boost cram
 CXX="$CXX -static-libstdc++"
 GXX="$CXX"
 export CXX GXX
+CCACHE_BASEDIR=$PWD
+CCACHE_DIR=/mnt/secondary/Share/tmp/bamboo.mobs.ccachedir
+export CCACHE_BASEDIR CCACHE_DIR
 
 echo "## Use PYTHONUSERBASE in lieu of virtualenv"
 export PATH=$PWD/build/bin:/mnt/software/a/anaconda2/4.2.0/bin:$PATH
 export PYTHONUSERBASE=$PWD/build
-# pip 9 create some problem with egg style install
+# pip 9 create some problem with egg style install so don't upgrade pip
 PIP="pip --cache-dir=$PWD/.pip --disable-pip-version-check"
 
 echo "## Install pip modules"
@@ -27,13 +30,7 @@ $PIP install --user \
   $NX3PBASEURL/pythonpkgs/avro-1.7.7-cp27-none-any.whl \
   iso8601 \
   $NX3PBASEURL/pythonpkgs/tabulate-0.7.5-cp27-none-any.whl \
-  cram \
   coverage
-if [ ! -d _deps/pacbiotestdata ]; then
-  ( cd _deps && git clone ssh://git@bitbucket.nanofluidics.com:7999/sat/pacbiotestdata.git )
-else
-  ( cd _deps/pacbiotestdata && git checkout . && git clean -xdf )
-fi
 ln -sfn ../data _deps/pacbiotestdata/pbtestdata/data
 $PIP install --user -e _deps/pacbiotestdata
 $PIP install --user -e _deps/pbcore
@@ -51,6 +48,7 @@ echo "## Fetch unanimity \"submodules\""
   && ln -sfn $PWD/../seqan    third-party/seqan \
   && ln -sfn $PWD/../pbbam    third-party/pbbam \
   && ln -sfn $PWD/../pbcopper third-party/pbcopper )
+# the reason to use $PWD/.. full path is that pip will copy it to /tmp
 
 echo "# BUILD"
 echo "## pip install CC2"
@@ -64,6 +62,7 @@ echo "## pip install CC2"
 echo "## install ConsensusCore"
 ( cd _deps/ConsensusCore \
   && python setup.py install --user --boost=$BOOST_ROOT )
+# legacy project doesn't do pip well, have no interest in this project
 
 echo "## install GC"
 $PIP install --user --verbose -e .
