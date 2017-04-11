@@ -79,10 +79,13 @@ coverage run --source GenomicConsensus -m py.test --verbose --junit-xml=nosetest
 coverage xml -o coverage.xml
 sed -i -e 's@filename="@filename="./@g' coverage.xml
 
+ConsensusCore_VERSION=`$PIP freeze|grep 'ConsensusCore=='|awk -F '==' '{print $2}'`
+ConsensusCore2_VERSION=`$PIP freeze|grep 'ConsensusCore2=='|awk -F '==' '{print $2}'`
+GenomicConsensus_VERSION=`$PIP freeze|grep 'GenomicConsensus=='|awk -F '==' '{print $2}'`
 if [ "_$bamboo_planRepository_1_branch" = "_develop" ]; then
   NEXUS_BASEURL=http://ossnexus.pacificbiosciences.com/repository
   NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-4.9.2
-  curl -v -n --upload-file _deps/ConsensusCore/dist/ConsensusCore-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore-SNAPSHOT-cp27-cp27mu-linux_x86_64.whl
-  curl -v -n --upload-file _deps/unanimity/ConsensusCore2-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore2-SNAPSHOT-cp27-cp27mu-linux_x86_64.whl
-  curl -v -n --upload-file dist/GenomicConsensus-*.whl $NEXUS_URL/pythonpkgs/GenomicConsensus-SNAPSHOT-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file _deps/ConsensusCore/dist/ConsensusCore-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore-${ConsensusCore_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file _deps/unanimity/ConsensusCore2-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file dist/GenomicConsensus-*.whl $NEXUS_URL/pythonpkgs/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
 fi
