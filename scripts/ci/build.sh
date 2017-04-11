@@ -13,6 +13,7 @@ GXX="$CXX"
 export CXX GXX
 CCACHE_BASEDIR=$PWD
 CCACHE_DIR=/mnt/secondary/Share/tmp/bamboo.mobs.ccachedir
+CCACHE_DIR=$PWD/.pip
 export CCACHE_BASEDIR CCACHE_DIR
 
 echo "## Use PYTHONUSERBASE in lieu of virtualenv"
@@ -22,7 +23,7 @@ export PYTHONUSERBASE=$PWD/build
 PIP="pip --cache-dir=$PWD/.pip --disable-pip-version-check"
 
 echo "## Install pip modules"
-NX3PBASEURL=http://nexus/repository/maven-thirdparty/gcc-4.9.2
+NX3PBASEURL=http://nexus/repository/unsupported/pitchfork/gcc-4.9.2
 NXSABASEURL=http://nexus/repository/maven-snapshots/pacbio/sat
 $PIP install --user \
   $NX3PBASEURL/pythonpkgs/pysam-0.9.1.4-cp27-cp27mu-linux_x86_64.whl \
@@ -61,8 +62,9 @@ echo "## pip install CC2"
 
 echo "## install ConsensusCore"
 ( cd _deps/ConsensusCore \
-  && python setup.py install --user --boost=$BOOST_ROOT )
-# legacy project doesn't do pip well, have no interest in this project
+  && python setup.py bdist_wheel --boost=$BOOST_ROOT \
+  && echo dist/ConsensusCore-*.whl | \
+     xargs $PIP install --user --verbose )
 
 echo "## install GC"
 $PIP install --user --verbose .
@@ -76,3 +78,30 @@ echo "## test CC2 via GC"
 coverage run --source GenomicConsensus -m py.test --verbose --junit-xml=nosetests.xml tests/unit
 coverage xml -o coverage.xml
 sed -i -e 's@filename="@filename="./@g' coverage.xml
+
+cd build
+tar zcf ConsensusCore-SNAPSHOT.tgz \
+  lib/python2.7/site-packages/ConsensusCore.* \
+  lib/python2.7/site-packages/ConsensusCore-* \
+  lib/python2.7/site-packages/_ConsensusCore.*
+tar zcf ConsensusCore2-SNAPSHOT.tgz \
+  lib/python2.7/site-packages/ConsensusCore2.* \
+  lib/python2.7/site-packages/ConsensusCore2-* \
+  lib/python2.7/site-packages/_ConsensusCore2.*
+tar zcf GenomicConsensus-SNAPSHOT.tgz \
+  lib/python2.7/site-packages/GenomicConsensus* \
+  bin/arrow \
+  bin/gffToBed \
+  bin/gffToVcf \
+  bin/plurality \
+  bin/poa \
+  bin/quiver \
+  bin/summarizeConsensus \
+  bin/variantCaller
+if [ "_$bamboo_planRepository_1_branch" = "_develop" ]; then
+  NEXUS_BASEURL=http://ossnexus.pacificbiosciences.com/repository
+  NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-4.9.2
+  curl -v -n --upload-file ConsensusCore-SNAPSHOT.tgz $NEXUS_URL/pythonpkgs/ConsensusCore-SNAPSHOT.tgz
+  curl -v -n --upload-file ConsensusCore2-SNAPSHOT.tgz $NEXUS_URL/pythonpkgs/ConsensusCore2-SNAPSHOT.tgz
+  curl -v -n --upload-file GenomicConsensus-SNAPSHOT.tgz $NEXUS_URL/pythonpkgs/GenomicConsensus-SNAPSHOT.tgz
+fi
