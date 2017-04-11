@@ -13,7 +13,6 @@ GXX="$CXX"
 export CXX GXX
 CCACHE_BASEDIR=$PWD
 CCACHE_DIR=/mnt/secondary/Share/tmp/bamboo.mobs.ccachedir
-CCACHE_DIR=$PWD/.pip
 export CCACHE_BASEDIR CCACHE_DIR
 
 echo "## Use PYTHONUSERBASE in lieu of virtualenv"
