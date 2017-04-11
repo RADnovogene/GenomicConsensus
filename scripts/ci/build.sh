@@ -51,56 +51,38 @@ echo "## Fetch unanimity \"submodules\""
 # the reason to use $PWD/.. full path is that pip will copy it to /tmp
 
 echo "# BUILD"
-echo "## pip install CC2"
-( cd _deps/unanimity \
-  && CMAKE_BUILD_TYPE=ReleaseWithAssert \
-     CMAKE_COMMAND=cmake \
-     ZLIB_INCLUDE_DIR=$PWD/../../build/include \
-     ZLIB_LIBRARY=$PWD/../../build/lib/libz.so \
-     VERBOSE=1 $PIP install --user --verbose . )
-
 echo "## install ConsensusCore"
 ( cd _deps/ConsensusCore \
   && python setup.py bdist_wheel --boost=$BOOST_ROOT \
   && echo dist/ConsensusCore-*.whl | \
      xargs $PIP install --user --verbose )
 
+echo "## pip install CC2"
+( cd _deps/unanimity \
+  && CMAKE_BUILD_TYPE=ReleaseWithAssert \
+     CMAKE_COMMAND=cmake \
+     ZLIB_INCLUDE_DIR=$PWD/../../build/include \
+     ZLIB_LIBRARY=$PWD/../../build/lib/libz.so \
+     VERBOSE=1 $PIP wheel --verbose . \
+     && $PIP install --user --verbose ConsensusCore2-*.whl )
+
 echo "## install GC"
-$PIP install --user --verbose .
+python setup.py bdist_wheel
+$PIP install --user --verbose dist/GenomicConsensus-*.whl
 
 echo "# TEST"
 echo "## CC2 version test"
 python -c "import ConsensusCore2 ; print ConsensusCore2.__version__"
 
 echo "## test CC2 via GC"
-#nosetests --verbose --with-xunit --xunit-file=nosetests.xml --with-coverage --cover-xml --cover-xml-file=coverage.xml tests/unit
 coverage run --source GenomicConsensus -m py.test --verbose --junit-xml=nosetests.xml tests/unit
 coverage xml -o coverage.xml
 sed -i -e 's@filename="@filename="./@g' coverage.xml
 
-cd build
-#tar zcf ConsensusCore-SNAPSHOT.tgz \
-#  lib/python2.7/site-packages/ConsensusCore.* \
-#  lib/python2.7/site-packages/ConsensusCore-* \
-#  lib/python2.7/site-packages/_ConsensusCore.*
-tar zcf ConsensusCore2-SNAPSHOT.tgz \
-  lib/python2.7/site-packages/ConsensusCore2.* \
-  lib/python2.7/site-packages/ConsensusCore2-* \
-  lib/python2.7/site-packages/_ConsensusCore2.*
-tar zcf GenomicConsensus-SNAPSHOT.tgz \
-  lib/python2.7/site-packages/GenomicConsensus* \
-  bin/arrow \
-  bin/gffToBed \
-  bin/gffToVcf \
-  bin/plurality \
-  bin/poa \
-  bin/quiver \
-  bin/summarizeConsensus \
-  bin/variantCaller
 if [ "_$bamboo_planRepository_1_branch" = "_develop" ]; then
   NEXUS_BASEURL=http://ossnexus.pacificbiosciences.com/repository
   NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-4.9.2
-  curl -v -n --upload-file ../_deps/ConsensusCore/dist/ConsensusCore-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore-SNAPSHOT-py2-none-linux_x86_64.whl
-  curl -v -n --upload-file ConsensusCore2-SNAPSHOT.tgz $NEXUS_URL/pythonpkgs/ConsensusCore2-SNAPSHOT.tgz
-  curl -v -n --upload-file GenomicConsensus-SNAPSHOT.tgz $NEXUS_URL/pythonpkgs/GenomicConsensus-SNAPSHOT.tgz
+  curl -v -n --upload-file _deps/ConsensusCore/dist/ConsensusCore-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore-SNAPSHOT-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file _deps/unanimity/ConsensusCore2-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore2-SNAPSHOT-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file dist/GenomicConsensus-*.whl $NEXUS_URL/pythonpkgs/GenomicConsensus-SNAPSHOT-cp27-cp27mu-linux_x86_64.whl
 fi
