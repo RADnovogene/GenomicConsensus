@@ -79,10 +79,10 @@ coverage xml -o coverage.xml
 sed -i -e 's@filename="@filename="./@g' coverage.xml
 
 cd build
-tar zcf ConsensusCore-SNAPSHOT.tgz \
-  lib/python2.7/site-packages/ConsensusCore.* \
-  lib/python2.7/site-packages/ConsensusCore-* \
-  lib/python2.7/site-packages/_ConsensusCore.*
+#tar zcf ConsensusCore-SNAPSHOT.tgz \
+#  lib/python2.7/site-packages/ConsensusCore.* \
+#  lib/python2.7/site-packages/ConsensusCore-* \
+#  lib/python2.7/site-packages/_ConsensusCore.*
 tar zcf ConsensusCore2-SNAPSHOT.tgz \
   lib/python2.7/site-packages/ConsensusCore2.* \
   lib/python2.7/site-packages/ConsensusCore2-* \
@@ -100,7 +100,7 @@ tar zcf GenomicConsensus-SNAPSHOT.tgz \
 if [ "_$bamboo_planRepository_1_branch" = "_develop" ]; then
   NEXUS_BASEURL=http://ossnexus.pacificbiosciences.com/repository
   NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-4.9.2
-  curl -v -n --upload-file ConsensusCore-SNAPSHOT.tgz $NEXUS_URL/pythonpkgs/ConsensusCore-SNAPSHOT.tgz
+  curl -v -n --upload-file ../_deps/ConsensusCore/dist/ConsensusCore-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore-SNAPSHOT-py2-none-linux_x86_64.whl
   curl -v -n --upload-file ConsensusCore2-SNAPSHOT.tgz $NEXUS_URL/pythonpkgs/ConsensusCore2-SNAPSHOT.tgz
   curl -v -n --upload-file GenomicConsensus-SNAPSHOT.tgz $NEXUS_URL/pythonpkgs/GenomicConsensus-SNAPSHOT.tgz
 fi
