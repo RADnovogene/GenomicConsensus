@@ -53,19 +53,15 @@ def uniqueSingleBaseMutations(templateSequence, positions=None):
         # snvs
         for subsBase in allBases:
             if subsBase != tplBase:
-                yield cc.Mutation(cc.MutationType_SUBSTITUTION,
-                                  tplStart,
-                                  subsBase)
+                yield cc.Mutation_Substitution(tplStart, subsBase)
         # Insertions---only allowing insertions that are not cognate
         # with the previous base.
         for insBase in allBases:
             if insBase != prevTplBase:
-                yield cc.Mutation(cc.MutationType_INSERTION,
-                                  tplStart,
-                                  insBase)
+                yield cc.Mutation_Insertion(tplStart, insBase)
         # Deletion--only allowed if refBase does not match previous tpl base
         if tplBase != prevTplBase:
-            yield cc.Mutation(cc.MutationType_DELETION, tplStart)
+            yield cc.Mutation_Deletion(tplStart, 1)
 
 def allSingleBaseMutations(templateSequence, positions=None):
     """
@@ -79,16 +75,12 @@ def allSingleBaseMutations(templateSequence, positions=None):
         # snvs
         for subsBase in allBases:
             if subsBase != tplBase:
-                yield cc.Mutation(cc.MutationType_SUBSTITUTION,
-                                  tplStart,
-                                  subsBase)
+                yield cc.Mutation_Substitution(tplStart, subsBase)
         # Insertions
         for insBase in allBases:
-            yield cc.Mutation(cc.MutationType_INSERTION,
-                              tplStart,
-                              insBase)
+            yield cc.Mutation_Insertion(tplStart, insBase)
         # Deletion
-        yield cc.Mutation(cc.MutationType_DELETION, tplStart)
+        yield cc.Mutation_Deletion(tplStart, 1)
 
 def nearbyMutations(mutations, tpl, neighborhoodSize):
     """
@@ -247,12 +239,10 @@ def _shortMutationDescription(mut, tpl):
     201 Sub C > T
     201 Del C > .
     """
-    _type = _typeMap[mut.Type]
+    _type = _typeMap[mut.Type()]
     _pos = mut.Start()
-    _oldBase = "." if mut.Type == cc.MutationType_INSERTION \
-               else tpl[_pos]
-    _newBase = "." if mut.Type == cc.MutationType_DELETION \
-               else mut.Base
+    _oldBase = "." if mut.IsInsertion() else tpl[_pos]
+    _newBase = "." if mut.IsDeletion()  else mut.Base
     return "%d %s %s > %s" % (_pos, _type, _oldBase, _newBase)
 
 def scoreMatrix(ai):

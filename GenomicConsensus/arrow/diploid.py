@@ -78,7 +78,7 @@ def packMuts(cssBase, mut1, mut2):
     #
     nonNullMut = mut1 or mut2
     start   = nonNullMut.Start()
-    mutType = nonNullMut.Type
+    mutType = nonNullMut.Type()
     newBase1 = mut1.Base if mut1 else cssBase
     newBase2 = mut2.Base if mut2 else cssBase
     newBasePacked = packIUPAC((newBase1, newBase2))
