@@ -242,7 +242,7 @@ def _shortMutationDescription(mut, tpl):
     _type = _typeMap[mut.Type()]
     _pos = mut.Start()
     _oldBase = "." if mut.IsInsertion() else tpl[_pos]
-    _newBase = "." if mut.IsDeletion()  else mut.Base
+    _newBase = "." if mut.IsDeletion()  else mut.Bases()
     return "%d %s %s > %s" % (_pos, _type, _oldBase, _newBase)
 
 def scoreMatrix(ai):
