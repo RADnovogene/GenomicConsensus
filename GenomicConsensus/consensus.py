@@ -85,6 +85,14 @@ class Consensus(object):
         factory = d[noCallStyle]
         return factory(refWin, refSequence)
 
+    @property
+    def hasEvidence(self):
+        if isinstance(self, ArrowConsensus)  and self.ai  is None:
+            return False
+        if isinstance(self, QuiverConsensus) and self.mms is None:
+            return False
+        return True
+
 
 class QuiverConsensus(Consensus):
     """
