@@ -142,7 +142,8 @@ def consensusAndVariantsForWindow(alnFile, refWindow, referenceContig,
             maybeDumpEvidence = \
                 ((options.dumpEvidence == "all") or
                  (options.dumpEvidence == "outliers") or
-                 (options.dumpEvidence == "variants") and (len(variants) > 0))
+                 (options.dumpEvidence == "variants") and
+                 (len(variants) > 0) and css.hasEvidence)
             if maybeDumpEvidence:
                 refId, refStart, refEnd = subWin
                 refName = reference.idToName(refId)
