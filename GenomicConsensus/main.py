@@ -403,8 +403,6 @@ def resolved_tool_contract_runner(resolved_contract):
         "--algorithm", rc.task.options[Constants.ALGORITHM_ID],
         "--alignmentSetRefWindows",
     ]
-    if rc.task.options[Constants.DIPLOID_MODE_ID]:
-        args.append("--diploid")
     args_ = get_parser().arg_parser.parser.parse_args(args)
     rc = args_runner(args_)
     if rc == 0:
