@@ -80,7 +80,6 @@ class Constants(object):
     ALGORITHM_ID = "genomic_consensus.task_options.algorithm"
     MIN_CONFIDENCE_ID = "genomic_consensus.task_options.min_confidence"
     MIN_COVERAGE_ID = "genomic_consensus.task_options.min_coverage"
-    DIPLOID_MODE_ID = "genomic_consensus.task_options.diploid"
 
     ALGORITHM_CHOICES = ("quiver", "arrow", "plurality", "poa", "best")
     DEFAULT_ALGORITHM = "best"
@@ -150,12 +149,6 @@ def get_parser():
         description="The minimum site coverage that must be achieved for " +\
                     "variant calls and consensus to be calculated for a site.")
 
-    tcp.add_boolean(
-        option_id=Constants.DIPLOID_MODE_ID,
-        option_str="diploid",
-        default=False,
-        name="Diploid mode (experimental)",
-        description="Enable detection of heterozygous variants (experimental)")
     add_options_to_argument_parser(p.arg_parser.parser)
     return p
 
