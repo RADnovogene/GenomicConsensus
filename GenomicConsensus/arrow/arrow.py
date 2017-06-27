@@ -294,7 +294,9 @@ def configure(options, alnFile):
                          minReadScore=options.minReadScore,
                          minHqRegionSnr=options.minHqRegionSnr,
                          minZScore=options.minZScore,
-                         minAccuracy=options.minAccuracy)
+                         minAccuracy=options.minAccuracy,
+                         maskRadius=options.maskRadius,
+                         maskErrorRate=options.maskErrorRate)
 
 def slaveFactories(threaded):
     # By default we use slave processes. The tuple ordering is important.
