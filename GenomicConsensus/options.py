@@ -48,7 +48,7 @@
 #  and get the loaded options dictionary.
 #
 from __future__ import absolute_import
-import argparse, h5py, os, os.path, sys, json
+import argparse, os, os.path, sys, json
 
 from pbcommand.models import FileTypes, SymbolTypes, get_pbparser
 from pbcommand.common_options import (add_resolved_tool_contract_option,

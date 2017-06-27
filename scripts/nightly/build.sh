@@ -24,7 +24,7 @@ set -u
 
 echo "## Install pip modules"
 pip install --upgrade pip
-pip install numpy cython h5py pysam cram pytest coverage jsonschema avro nose
+pip install numpy cython pysam cram pytest coverage jsonschema avro nose
 pip install --no-deps git+https://github.com/PacificBiosciences/pbcommand.git
 pip install --no-deps git+https://github.com/PacificBiosciences/pbcore.git
 
