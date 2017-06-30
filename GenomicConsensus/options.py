@@ -91,6 +91,8 @@ class Constants(object):
     DEFAULT_MIN_HQREGIONSNR = 3.75
     DEFAULT_MIN_ZSCORE = -3.5
     DEFAULT_MIN_ACCURACY = 0.82
+    DEFAULT_MASK_RADIUS = 0
+    DEFAULT_MASK_ERROR_RATE = 0.7
 
 def get_parser():
     """
@@ -336,6 +338,20 @@ def add_options_to_argument_parser(parser):
              "parameters file, or just the name of the chemistry, in which " + \
              "case the best available model is chosen.  Default is 'auto', " + \
              "which selects the best parameter set from the alignment data")
+    algorithm.add_argument(
+        "--maskRadius",
+        dest="maskRadius",
+        type=int,
+        default=Constants.DEFAULT_MASK_RADIUS,
+        help="Radius of window to use when excluding local regions for " + \
+             "exceeding maskMinErrorRate, where 0 disables any filtering (arrow-only).")
+    algorithm.add_argument(
+        "--maskErrorRate",
+        dest="maskErrorRate",
+        type=float,
+        default=Constants.DEFAULT_MASK_ERROR_RATE,
+        help="Maximum local error rate before the local region defined by " + \
+             "maskRadius is excluded from polishing (arrow-only).")
 
     debugging = parser.add_argument_group("Verbosity and debugging/profiling")
     add_debug_option(debugging)

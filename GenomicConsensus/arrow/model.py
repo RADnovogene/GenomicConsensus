@@ -65,7 +65,9 @@ class ArrowConfig(object):
                  minReadScore=0.75,
                  minHqRegionSnr=3.75,
                  minZScore=-3.5,
-                 minAccuracy=0.82):
+                 minAccuracy=0.82,
+                 maskRadius=0,
+                 maskErrorRate=0.5):
 
         self.minMapQV                   = minMapQV
         self.minPoaCoverage             = minPoaCoverage
@@ -80,6 +82,8 @@ class ArrowConfig(object):
         self.minHqRegionSnr             = minHqRegionSnr
         self.minZScore                  = minZScore
         self.minAccuracy                = minAccuracy
+        self.maskRadius                 = maskRadius
+        self.maskErrorRate              = maskErrorRate
 
     def extractMappedRead(self, aln, windowStart):
         """

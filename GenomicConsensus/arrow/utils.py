@@ -124,6 +124,9 @@ def refineConsensus(ai, arrowConfig):
     cfg = cc.PolishConfig(arrowConfig.maxIterations,
                           arrowConfig.mutationSeparation,
                           arrowConfig.mutationNeighborhood)
+    if arrowConfig.maskRadius:
+        _ = cc.Polish(ai, cfg)
+        ai.MaskIntervals(arrowConfig.maskRadius, arrowConfig.maskErrorRate)
     polishResult = cc.Polish(ai, cfg)
     return str(ai), polishResult.hasConverged
 
