@@ -80,7 +80,7 @@ class Constants(object):
     ALGORITHM_ID = "genomic_consensus.task_options.algorithm"
     MIN_CONFIDENCE_ID = "genomic_consensus.task_options.min_confidence"
     MIN_COVERAGE_ID = "genomic_consensus.task_options.min_coverage"
-    MASK_RADIUS_ID = "genomic_consensus.task_options.mask_radius"
+    MASKING_ID = "genomic_consensus.task_options.masking"
 
     ALGORITHM_CHOICES = ("quiver", "arrow", "plurality", "poa", "best")
     DEFAULT_ALGORITHM = "best"
@@ -151,14 +151,13 @@ def get_parser():
         name="Minimum coverage",
         description="The minimum site coverage that must be achieved for " +\
                     "variant calls and consensus to be calculated for a site.")
-    tcp.add_int(
-        option_id=Constants.MASK_RADIUS_ID,
-        option_str="maskRadius",
-        default=Constants.DEFAULT_MASK_RADIUS,
-        name="Mask radius",
-        description="Radius of template window for identifying poorly-concordant " +\
-                    "regions of reads to exclude from polishing (arrow-only). " +\
-                    "A value of 0 disables masking.")
+    tcp.add_boolean(
+        option_id=Constants.MASKING_ID,
+        option_str="masking",
+        default=True,
+        name="Masking",
+        description="Mask regions of reads with low template concordance " +\
+                    "from contributing during polishing.")
 
     add_options_to_argument_parser(p.arg_parser.parser)
     return p
