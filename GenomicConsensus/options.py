@@ -156,8 +156,8 @@ def get_parser():
         option_str="masking",
         default=True,
         name="Masking",
-        description="Mask regions of reads with low template concordance " +\
-                    "from contributing during polishing.")
+        description="During the polishing step omit regions of reads " +\
+                    "that have low concordance with the template.")
 
     add_options_to_argument_parser(p.arg_parser.parser)
     return p
