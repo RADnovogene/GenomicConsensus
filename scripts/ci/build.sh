@@ -5,15 +5,18 @@ echo "# DEPENDENCIES"
 echo "## Load modules"
 type module >& /dev/null || . /mnt/software/Modules/current/init/bash
 module load git/2.8.3
-module load gcc/4.9.2
+module load gcc/6.4.0
 module load cmake ninja
 module load swig ccache boost cram
 CXX="$CXX -static-libstdc++"
 GXX="$CXX"
 export CXX GXX
-CCACHE_BASEDIR=$PWD
-CCACHE_DIR=/mnt/secondary/Share/tmp/bamboo.mobs.ccachedir
-export CCACHE_BASEDIR CCACHE_DIR
+if [[ $USER == "bamboo" ]]; then
+  export CCACHE_DIR=/mnt/secondary/Share/tmp/bamboo.mobs.ccachedir
+  export CCACHE_TEMPDIR=/scratch/bamboo.ccache_tempdir
+fi
+export CCACHE_COMPILERCHECK='%compiler% -dumpversion'
+export CCACHE_BASEDIR=$PWD
 
 echo "## Use PYTHONUSERBASE in lieu of virtualenv"
 export PATH=$PWD/build/bin:/mnt/software/a/anaconda2/4.2.0/bin:$PATH
@@ -82,7 +85,7 @@ sed -i -e 's@filename="@filename="./@g' coverage.xml
 ConsensusCore_VERSION=`$PIP freeze|grep 'ConsensusCore=='|awk -F '==' '{print $2}'`
 ConsensusCore2_VERSION=`$PIP freeze|grep 'ConsensusCore2=='|awk -F '==' '{print $2}'`
 GenomicConsensus_VERSION=`$PIP freeze|grep 'GenomicConsensus=='|awk -F '==' '{print $2}'`
-if [ "_$bamboo_planRepository_1_branch" = "_develop" ]; then
+if [[ "_$bamboo_planRepository_1_branch" == "_develop" ]]; then
   NEXUS_BASEURL=http://ossnexus.pacificbiosciences.com/repository
   NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-4.9.2
   curl -v -n --upload-file _deps/ConsensusCore/dist/ConsensusCore-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore-${ConsensusCore_VERSION}-cp27-cp27mu-linux_x86_64.whl
