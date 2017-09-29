@@ -1,2 +1,3 @@
 #!/bin/bash
-bash -xe scripts/ci/build.sh $@
+set -vex
+bash -vex scripts/ci/build.sh $@

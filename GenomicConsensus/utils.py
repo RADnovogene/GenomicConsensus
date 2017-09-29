@@ -34,9 +34,18 @@ from __future__ import absolute_import
 import ast
 import math, numpy as np, os.path, sys, itertools
 
+class CriticalError(BaseException):
+    """By deriving from BaseException instead of Exception,
+    this will not be trapped by normal "except Exception:" blocks.
+    But it will still not trigger a system-exit, which could
+    subvert the logging clean-up in pbcommand.
+    SE-1012
+    """
+
 def die(msg):
     print >>sys.stderr, msg
-    sys.exit(-1)
+    raise CriticalError(msg)
+    #sys.exit(-1)
 
 class CommonEqualityMixin(object):
     def __eq__(self, other):
