@@ -11,11 +11,6 @@ import pbtestdata
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 assert os.path.isdir(DATA_DIR)
 
-# TODO(lhepler): investigate this maybe
-# These tests seem to cause some logging failure at shutdown;
-# disabling them pending upstream fix.  See:
-# https://bugzilla.nanofluidics.com/show_bug.cgi?id=33699
-
 class TestVariantCaller(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "variantCaller "
     DRIVER_EMIT = DRIVER_BASE + " --emit-tool-contract "
