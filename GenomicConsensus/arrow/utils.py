@@ -32,7 +32,6 @@
 
 import numpy as np, itertools, logging, re, sys
 from collections import Counter
-from traceback import format_exception
 
 from GenomicConsensus.variants import *
 from GenomicConsensus.utils import *
@@ -374,7 +373,7 @@ def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None
 
         try:
             p = cc.PoaConsensus.FindConsensus(fwdSequences[:arrowConfig.maxPoaCoverage])
-        except:
+        except Exception:
             logging.info("%s: POA could not be generated" % (refWindow,))
             return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
                                                   refWindow, refSequence)

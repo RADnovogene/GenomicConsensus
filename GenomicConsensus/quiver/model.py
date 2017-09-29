@@ -398,9 +398,9 @@ def loadParameterSets(parametersFile=None, spec=None, cmpH5=None):
         try:
             p = sets[spec]
             params = { "*" : p }
-        except:
-            die("Quiver: no available parameter set named %s" % \
-                spec)
+        except Exception:
+            die("Quiver: no available parameter set named {!r}".format(
+                spec))
     elif chemistryName:
         qvsAvailable = cmpH5.baseFeaturesAvailable()
         p = _bestParameterSet(sets, chemistryName, qvsAvailable)

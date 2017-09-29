@@ -304,7 +304,7 @@ def consensusForAlignments(refWindow, refSequence, alns, quiverConfig):
 
     try:
         p = cc.PoaConsensus.FindConsensus(fwdSequences[:quiverConfig.maxPoaCoverage])
-    except:
+    except Exception:
         logging.info("%s: POA could not be generated" % (refWindow,))
         return QuiverConsensus.noCallConsensus(quiverConfig.noEvidenceConsensus,
                                                refWindow, refSequence)

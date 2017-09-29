@@ -34,7 +34,7 @@
 from __future__ import absolute_import
 
 import argparse, atexit, cProfile, gc, glob, h5py, logging, multiprocessing
-import os, pstats, random, shutil, tempfile, time, threading, Queue, traceback
+import os, pstats, random, shutil, tempfile, time, threading, Queue, traceback, pprint
 import functools
 import re
 import sys
@@ -167,7 +167,9 @@ class ToolRunner(object):
                 try:
                     win = reference.stringToWindow(s)
                     options.referenceWindows.append(win)
-                except:
+                except Exception:
+                    msg = traceback.format_exc()
+                    logging.debug(msg)
                     pass
         else:
             options.referenceWindows = map(reference.stringToWindow,
@@ -336,9 +338,10 @@ class ToolRunner(object):
 
             else:
                 self._mainLoop()
-        except:
-            why = traceback.format_exc()
-            self.abortWork(why)
+        except BaseException as exc:
+            msg = 'options={}'.format(pprint.pformat(vars(options)))
+            logging.exception(msg)
+            self.abortWork(repr(exc))
 
         monitoringThread.join()
 
