@@ -3,7 +3,7 @@ import unittest
 import os.path
 
 from GenomicConsensus.options import Constants
-from pbcore.io import openDataSet, ContigSet
+from pbcore.io import ContigSet
 import pbcommand.testkit
 
 import pbtestdata
@@ -28,8 +28,8 @@ class TestVariantCaller(pbcommand.testkit.PbTestApp):
 
     def run_after(self, rtc, output_dir):
         contigs_file = rtc.task.output_files[2]
-        with openDataSet(contigs_file, strict=True) as ds:
-            self.assertTrue(isinstance(ds, ContigSet))
+        with ContigSet(contigs_file, strict=True) as ds:
+            pass
 
 
 class TestVariantCallerArrow(TestVariantCaller):
