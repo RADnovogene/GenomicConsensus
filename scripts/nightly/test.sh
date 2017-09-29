@@ -4,7 +4,12 @@ set -euo pipefail
 echo "# DEPENDENCIES"
 echo "## Load modules"
 source /mnt/software/Modules/current/init/bash
-module load git gcc/5.3.0 python/2.7.9 cmake cram swig ccache virtualenv zlib/1.2.5 ninja boost
+module load git/2.8.3
+module load gcc/6.4.0
+module load python/2.7.9 virtualenv
+module load zlib/1.2.5
+module load cmake ninja
+module load swig ccache boost cram
 
 set +u
 source venv/bin/activate
