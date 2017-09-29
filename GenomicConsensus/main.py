@@ -400,6 +400,8 @@ def resolved_tool_contract_runner(resolved_contract):
         "--numWorkers", str(rc.task.nproc),
         "--minCoverage", str(rc.task.options[Constants.MIN_COVERAGE_ID]),
         "--minConfidence", str(rc.task.options[Constants.MIN_CONFIDENCE_ID]),
+        "--maskRadius", str(Constants.DEFAULT_MASK_RADIUS) if \
+                        bool(rc.task.options[Constants.MASKING_ID]) else "0",
         "--algorithm", rc.task.options[Constants.ALGORITHM_ID],
         "--alignmentSetRefWindows",
     ]
