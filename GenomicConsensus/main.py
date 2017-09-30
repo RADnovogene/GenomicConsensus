@@ -154,9 +154,7 @@ class ToolRunner(object):
 
     def _loadReference(self, alnFile):
         logging.info("Loading reference")
-        err = reference.loadFromFile(options.referenceFilename, alnFile)
-        if err:
-            die("Error loading reference")
+        reference.loadFromFile(options.referenceFilename, alnFile)
         # Grok the referenceWindow spec, if any.
         if options.referenceWindowsAsString is None:
             options.referenceWindows = ()
