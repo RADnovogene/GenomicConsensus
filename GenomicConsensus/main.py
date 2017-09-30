@@ -154,9 +154,7 @@ class ToolRunner(object):
 
     def _loadReference(self, alnFile):
         logging.info("Loading reference")
-        err = reference.loadFromFile(options.referenceFilename, alnFile)
-        if err:
-            die("Error loading reference")
+        reference.loadFromFile(options.referenceFilename, alnFile)
         # Grok the referenceWindow spec, if any.
         if options.referenceWindowsAsString is None:
             options.referenceWindows = ()
@@ -381,7 +379,12 @@ def args_runner(args):
     options.__dict__.update(args.__dict__)
     processOptions()
     tr = ToolRunner()
-    return tr.main()
+    try:
+        return tr.main()
+    except Exception:
+        if options.notrace:
+            return -1
+        raise
 
 def resolved_tool_contract_runner(resolved_contract):
     rc = resolved_contract

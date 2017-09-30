@@ -364,6 +364,12 @@ def add_options_to_argument_parser(parser):
     debugging = parser.add_argument_group("Verbosity and debugging/profiling")
     add_debug_option(debugging)
     debugging.add_argument(
+        "--notrace",
+        action="store_true",
+        dest="notrace",
+        default=False,
+        help="Suppress stacktrace for exceptions (to simplify testing)")
+    debugging.add_argument(
         "--pdbAtStartup",
         action="store_true",
         dest="pdbAtStartup",
