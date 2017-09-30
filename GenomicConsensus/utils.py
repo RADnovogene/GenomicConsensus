@@ -34,7 +34,7 @@ from __future__ import absolute_import
 import ast
 import math, numpy as np, os.path, sys, itertools
 
-class CriticalError(BaseException):
+class DieException(Exception):
     """By deriving from BaseException instead of Exception,
     this will not be trapped by normal "except Exception:" blocks.
     But it will still not trigger a system-exit, which could
@@ -44,7 +44,7 @@ class CriticalError(BaseException):
 
 def die(msg):
     print >>sys.stderr, msg
-    raise CriticalError(msg)
+    raise DieException(msg)
     #sys.exit(-1)
 
 class CommonEqualityMixin(object):
