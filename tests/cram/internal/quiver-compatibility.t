@@ -34,7 +34,7 @@ It should handle the request of a parameter set by complete name:
 parameter set or chemistry:
 
   $ quiver --notrace -p SuperChem.Model -r $REFERENCE -o variants.gff $INPUT
-  Quiver: no available parameter set named SuperChem.Model
+  Quiver: no available parameter set named 'SuperChem.Model'
   [255]
 
   $ quiver --notrace -p SuperChem -r $REFERENCE -o variants.gff $INPUT
