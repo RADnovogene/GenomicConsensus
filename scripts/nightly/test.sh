@@ -20,6 +20,12 @@ echo "# TEST"
 echo "## CC2 version test"
 python -c "import ConsensusCore2 ; print ConsensusCore2.__version__"
 
+module load cram/0.7
+module add mummer/3.23
+module add exonerate/2.0.0
+module add blasr/2.3.0
+module add gfftools/dalexander
+
 echo "## test GC"
 make check
 
