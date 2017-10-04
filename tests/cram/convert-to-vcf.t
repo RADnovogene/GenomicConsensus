@@ -1,7 +1,7 @@
 
 Test conversion GFF -> VCF
 
-  $ export DATA=$TESTDIR/../../data
+  $ export DATA=$TESTDIR/../data
   $ export INPUT=$DATA/converters/variants.gff.gz
 
   $ gffToVcf --globalReference=Staphylococcus_aureus_USA300_TCH1516 $INPUT

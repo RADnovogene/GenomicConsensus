@@ -1,7 +1,7 @@
 
 Test conversion variants GFF -> BED.
 
-  $ export DATA=$TESTDIR/../../data
+  $ export DATA=$TESTDIR/../data
   $ export INPUT=$DATA/converters/variants.gff.gz
 
   $ gffToBed --name=variants \

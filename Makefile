@@ -4,9 +4,15 @@ INTERNAL_UTILS_PATH = /mnt/secondary/Share/Quiver/Tools
 develop:
 	python setup.py develop
 
-tests:
+tests: unit-tests basic-tests
+
+unit-tests:
 	# Unit tests
 	py.test --junit-xml=nosetests.xml tests/unit
+
+# Note: We need at least cram/0.7 for '--xunit-file'
+
+basic-tests:
 	# End-to-end tests
 	PATH=`pwd`:$(PATH) cram --xunit-file=gc-cram.xml tests/cram/*.t
 
