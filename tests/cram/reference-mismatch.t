@@ -3,7 +3,7 @@ Test a few scenarios where the reference FASTA disagrees slightly from
 the contigs aligned against in the cmp.h5, and make sure things behave
 sanely.
 
-  $ export DATA=$TESTDIR/../../data
+  $ export DATA=$TESTDIR/../data
   $ export INPUT=$DATA/hcv/aligned_reads.cmp.h5
   $ export WRONG_REFERENCE=$DATA/fluidigm_amplicons/Fluidigm_human_amplicons.fasta
   $ export REFERENCE_SUBSET=$DATA/hcv/5primeEnd.fa

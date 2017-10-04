@@ -1,7 +1,7 @@
 Run plurality on the small example file, and make sure the compressed
 output files are created correctly.
 
-  $ export DATA=$TESTDIR/../../data
+  $ export DATA=$TESTDIR/../data
   $ export INPUT=$DATA/hcv/aligned_reads.cmp.h5
   $ export REFERENCE=$DATA/hcv/HCV_Ref_For_187140.fasta
   $ variantCaller --algorithm=plurality -q 10 -r $REFERENCE -o variants.gff.gz -o consensus.fq.gz $INPUT
