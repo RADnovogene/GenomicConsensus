@@ -111,9 +111,10 @@ class ArrowConsensus(Consensus):
     is the ConsensusCore2 abstract integrator object, which can be used
     to perform some post-hoc analyses (diploid, sample mixture, etc)
     """
-    def __init__(self, refWindow, sequence, confidence, ai=None):
+    def __init__(self, refWindow, sequence, confidence, ai=None, diploidSites=None):
         super(ArrowConsensus, self).__init__(refWindow, sequence, confidence)
         self.ai = ai
+        self.diploidSites = diploidSites
 
 
 def totalLength(consensi):
