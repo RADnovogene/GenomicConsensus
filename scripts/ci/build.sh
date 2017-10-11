@@ -104,7 +104,7 @@ if [[ "_$bamboo_planRepository_1_branch" == "_develop" ]]; then
   curl -v -n --upload-file _deps/unanimity/ConsensusCore2-*.whl         $NEXUS_URL/pythonpkgs/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
   curl -v -n --upload-file dist/GenomicConsensus-*.whl                  $NEXUS_URL/pythonpkgs/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
   rm -rf bamboo_artifacts
-  mkdir bamboo_artifacts/gcc-6.4.0/wheelhouse
+  mkdir -p bamboo_artifacts/gcc-6.4.0/wheelhouse
   mv _deps/ConsensusCore/dist/ConsensusCore-*.whl bamboo_artifacts/gcc-6.4.0/wheelhouse/ConsensusCore-${ConsensusCore_VERSION}-cp27-cp27mu-linux_x86_64.whl
   mv _deps/unanimity/ConsensusCore2-*.whl         bamboo_artifacts/gcc-6.4.0/wheelhouse/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
   mv dist/GenomicConsensus-*.whl                  bamboo_artifacts/gcc-6.4.0/wheelhouse/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
