@@ -5,15 +5,19 @@ echo "# DEPENDENCIES"
 echo "## Load modules"
 type module >& /dev/null || . /mnt/software/Modules/current/init/bash
 module load git/2.8.3
-module load gcc/4.9.2
+module load gcc/6.4.0
 module load cmake ninja
-module load swig ccache boost cram
+module load cram/0.7
+module load swig ccache boost
 CXX="$CXX -static-libstdc++"
 GXX="$CXX"
 export CXX GXX
-CCACHE_BASEDIR=$PWD
-CCACHE_DIR=/mnt/secondary/Share/tmp/bamboo.mobs.ccachedir
-export CCACHE_BASEDIR CCACHE_DIR
+if [[ $USER == "bamboo" ]]; then
+  export CCACHE_DIR=/mnt/secondary/Share/tmp/bamboo.mobs.ccachedir
+  export CCACHE_TEMPDIR=/scratch/bamboo.ccache_tempdir
+fi
+export CCACHE_COMPILERCHECK='%compiler% -dumpversion'
+export CCACHE_BASEDIR=$PWD
 
 echo "## Use PYTHONUSERBASE in lieu of virtualenv"
 export PATH=$PWD/build/bin:/mnt/software/a/anaconda2/4.2.0/bin:$PATH
@@ -22,7 +26,7 @@ export PYTHONUSERBASE=$PWD/build
 PIP="pip --cache-dir=$PWD/.pip --disable-pip-version-check"
 
 echo "## Install pip modules"
-NX3PBASEURL=http://nexus/repository/unsupported/pitchfork/gcc-4.9.2
+NX3PBASEURL=http://nexus/repository/unsupported/pitchfork/gcc-6.4.0
 NXSABASEURL=http://nexus/repository/maven-snapshots/pacbio/sat
 $PIP install --user \
   $NX3PBASEURL/pythonpkgs/pysam-0.9.1.4-cp27-cp27mu-linux_x86_64.whl \
@@ -76,16 +80,32 @@ python -c "import ConsensusCore2 ; print ConsensusCore2.__version__"
 
 echo "## test CC2 via GC"
 coverage run --source GenomicConsensus -m py.test --verbose --junit-xml=nosetests.xml tests/unit
+
+# One fairly fast cram-test,
+#   quiver-tinyLambda-coverage-islands.t,
+# was moved from cram/internal. It needs some GNU modules.
+# If that becomes a problem, just move it back to cram/internal.
+module load mummer/3.23
+module load exonerate/2.0.0
+
+# Run fairly fast cram tests.
+make basic-tests
+
 coverage xml -o coverage.xml
 sed -i -e 's@filename="@filename="./@g' coverage.xml
 
 ConsensusCore_VERSION=`$PIP freeze|grep 'ConsensusCore=='|awk -F '==' '{print $2}'`
 ConsensusCore2_VERSION=`$PIP freeze|grep 'ConsensusCore2=='|awk -F '==' '{print $2}'`
 GenomicConsensus_VERSION=`$PIP freeze|grep 'GenomicConsensus=='|awk -F '==' '{print $2}'`
-if [ "_$bamboo_planRepository_1_branch" = "_develop" ]; then
+if [[ "_$bamboo_planRepository_1_branch" == "_develop" ]]; then
   NEXUS_BASEURL=http://ossnexus.pacificbiosciences.com/repository
-  NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-4.9.2
+  NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-6.4.0
   curl -v -n --upload-file _deps/ConsensusCore/dist/ConsensusCore-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore-${ConsensusCore_VERSION}-cp27-cp27mu-linux_x86_64.whl
-  curl -v -n --upload-file _deps/unanimity/ConsensusCore2-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
-  curl -v -n --upload-file dist/GenomicConsensus-*.whl $NEXUS_URL/pythonpkgs/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file _deps/unanimity/ConsensusCore2-*.whl         $NEXUS_URL/pythonpkgs/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file dist/GenomicConsensus-*.whl                  $NEXUS_URL/pythonpkgs/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  rm -rf bamboo_artifacts
+  mkdir -p bamboo_artifacts/gcc-6.4.0/wheelhouse
+  mv _deps/ConsensusCore/dist/ConsensusCore-*.whl bamboo_artifacts/gcc-6.4.0/wheelhouse/ConsensusCore-${ConsensusCore_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  mv _deps/unanimity/ConsensusCore2-*.whl         bamboo_artifacts/gcc-6.4.0/wheelhouse/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  mv dist/GenomicConsensus-*.whl                  bamboo_artifacts/gcc-6.4.0/wheelhouse/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
 fi

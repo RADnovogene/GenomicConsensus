@@ -32,7 +32,7 @@ setup(
         'pbcommand >= 0.3.20',
         'numpy >= 1.6.0',
         'h5py >= 2.0.1',
-        'ConsensusCore >= 1.0.1'
+        #'ConsensusCore == 1.0.2'
         # , 'ConsensusCore2 >= 0.9',
         ]
     )

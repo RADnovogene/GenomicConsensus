@@ -3,18 +3,13 @@ import unittest
 import os.path
 
 from GenomicConsensus.options import Constants
-from pbcore.io import openDataSet, ContigSet
+from pbcore.io import ContigSet
 import pbcommand.testkit
 
 import pbtestdata
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 assert os.path.isdir(DATA_DIR)
-
-# TODO(lhepler): investigate this maybe
-# These tests seem to cause some logging failure at shutdown;
-# disabling them pending upstream fix.  See:
-# https://bugzilla.nanofluidics.com/show_bug.cgi?id=33699
 
 class TestVariantCaller(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "variantCaller "
@@ -33,8 +28,8 @@ class TestVariantCaller(pbcommand.testkit.PbTestApp):
 
     def run_after(self, rtc, output_dir):
         contigs_file = rtc.task.output_files[2]
-        with openDataSet(contigs_file, strict=True) as ds:
-            self.assertTrue(isinstance(ds, ContigSet))
+        with ContigSet(contigs_file, strict=True) as ds:
+            pass
 
 
 class TestVariantCallerArrow(TestVariantCaller):

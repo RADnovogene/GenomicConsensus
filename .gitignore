@@ -11,3 +11,4 @@ dist/
 TAGS
 evidence_dump/
 nosetests.xml
+_deps/

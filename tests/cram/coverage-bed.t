@@ -1,6 +1,6 @@
 Test conversion of alignment summary GFF to coverage BED.
 
-  $ export DATA=$TESTDIR/../../data
+  $ export DATA=$TESTDIR/../data
   $ export INPUT=$DATA/fluidigm_amplicons/alignment_summary.gff
 
   $ gffToBed --name=coverage \

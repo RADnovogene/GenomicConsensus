@@ -64,14 +64,14 @@ def consensusCoreVersion():
     try:
         import ConsensusCore
         return ConsensusCore.Version.VersionString()
-    except:
+    except Exception:
         return None
 
 def consensusCore2Version():
     try:
         import ConsensusCore2
         return ConsensusCore2.__version__
-    except:
+    except Exception:
         return None
 
 class Constants(object):
@@ -364,6 +364,12 @@ def add_options_to_argument_parser(parser):
     debugging = parser.add_argument_group("Verbosity and debugging/profiling")
     add_debug_option(debugging)
     debugging.add_argument(
+        "--notrace",
+        action="store_true",
+        dest="notrace",
+        default=False,
+        help="Suppress stacktrace for exceptions (to simplify testing)")
+    debugging.add_argument(
         "--pdbAtStartup",
         action="store_true",
         dest="pdbAtStartup",
@@ -482,14 +488,14 @@ def processOptions():
     parser = get_parser().arg_parser.parser
     def checkInputFile(path):
         if not os.path.isfile(path):
-            parser.error("Input file %s not found." % (path,))
+            parser.error("Input file {!r} not found.".format(path))
 
     def checkOutputFile(path):
         try:
             f = open(path, "a")
             f.close()
-        except:
-            parser.error("Output file %s cannot be written." % (path,))
+        except Exception:
+            parser.error("Output file {!r} cannot be written.".format(path))
 
     options.gffOutputFilename   = None
     options.vcfOutputFilename   = None

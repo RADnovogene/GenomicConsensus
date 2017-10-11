@@ -34,7 +34,7 @@
 from __future__ import absolute_import
 
 import argparse, atexit, cProfile, gc, glob, h5py, logging, multiprocessing
-import os, pstats, random, shutil, tempfile, time, threading, Queue, traceback
+import os, pstats, random, shutil, tempfile, time, threading, Queue, traceback, pprint
 import functools
 import re
 import sys
@@ -154,9 +154,7 @@ class ToolRunner(object):
 
     def _loadReference(self, alnFile):
         logging.info("Loading reference")
-        err = reference.loadFromFile(options.referenceFilename, alnFile)
-        if err:
-            die("Error loading reference")
+        reference.loadFromFile(options.referenceFilename, alnFile)
         # Grok the referenceWindow spec, if any.
         if options.referenceWindowsAsString is None:
             options.referenceWindows = ()
@@ -167,7 +165,9 @@ class ToolRunner(object):
                 try:
                     win = reference.stringToWindow(s)
                     options.referenceWindows.append(win)
-                except:
+                except Exception:
+                    msg = traceback.format_exc()
+                    logging.debug(msg)
                     pass
         else:
             options.referenceWindows = map(reference.stringToWindow,
@@ -336,9 +336,10 @@ class ToolRunner(object):
 
             else:
                 self._mainLoop()
-        except:
-            why = traceback.format_exc()
-            self.abortWork(why)
+        except BaseException as exc:
+            msg = 'options={}'.format(pprint.pformat(vars(options)))
+            logging.exception(msg)
+            self.abortWork(repr(exc))
 
         monitoringThread.join()
 
@@ -378,7 +379,12 @@ def args_runner(args):
     options.__dict__.update(args.__dict__)
     processOptions()
     tr = ToolRunner()
-    return tr.main()
+    try:
+        return tr.main()
+    except Exception:
+        if options.notrace:
+            return -1
+        raise
 
 def resolved_tool_contract_runner(resolved_contract):
     rc = resolved_contract

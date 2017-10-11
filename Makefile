@@ -4,10 +4,17 @@ INTERNAL_UTILS_PATH = /mnt/secondary/Share/Quiver/Tools
 develop:
 	python setup.py develop
 
-tests:
+tests: unit-tests basic-tests
+
+unit-tests:
 	# Unit tests
 	py.test --junit-xml=nosetests.xml tests/unit
+
+# Note: We need at least cram/0.7 for '--xunit-file'
+
+basic-tests:
 	# End-to-end tests
+	# One of these now needs mummer and exonerate.
 	PATH=`pwd`:$(PATH) cram --xunit-file=gc-cram.xml tests/cram/*.t
 
 extra-tests:
@@ -18,13 +25,8 @@ extra-tests:
 
 internal-tests:
 	# Long running tests that depend on files located on PacBio internal NFS
-	# servers, including some utilities (exonerate suite, MuMMer)
-	(. /mnt/software/Modules/current/init/bash && \
-	 module add mummer/3.23         && \
-	 module add exonerate/2.0.0     && \
-	 module add blasr/2.3.0         && \
-	 module add gfftools/dalexander && \
-	 cram --xunit-file=gc-internal-cram.xml tests/cram/internal/*.t)
+	# servers, including some utilities (exonerate suite, MuMMer, blasr, gfftools)
+	 cram --xunit-file=gc-internal-cram.xml tests/cram/internal/*.t
 
 doc:
 	cd doc; make html
