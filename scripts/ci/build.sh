@@ -26,7 +26,7 @@ export PYTHONUSERBASE=$PWD/build
 PIP="pip --cache-dir=$PWD/.pip --disable-pip-version-check"
 
 echo "## Install pip modules"
-NX3PBASEURL=http://nexus/repository/unsupported/pitchfork/gcc-4.9.2
+NX3PBASEURL=http://nexus/repository/unsupported/pitchfork/gcc-6.4.0
 NXSABASEURL=http://nexus/repository/maven-snapshots/pacbio/sat
 $PIP install --user \
   $NX3PBASEURL/pythonpkgs/pysam-0.9.1.4-cp27-cp27mu-linux_x86_64.whl \
@@ -99,8 +99,13 @@ ConsensusCore2_VERSION=`$PIP freeze|grep 'ConsensusCore2=='|awk -F '==' '{print 
 GenomicConsensus_VERSION=`$PIP freeze|grep 'GenomicConsensus=='|awk -F '==' '{print $2}'`
 if [[ "_$bamboo_planRepository_1_branch" == "_develop" ]]; then
   NEXUS_BASEURL=http://ossnexus.pacificbiosciences.com/repository
-  NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-4.9.2
+  NEXUS_URL=$NEXUS_BASEURL/unsupported/gcc-6.4.0
   curl -v -n --upload-file _deps/ConsensusCore/dist/ConsensusCore-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore-${ConsensusCore_VERSION}-cp27-cp27mu-linux_x86_64.whl
-  curl -v -n --upload-file _deps/unanimity/ConsensusCore2-*.whl $NEXUS_URL/pythonpkgs/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
-  curl -v -n --upload-file dist/GenomicConsensus-*.whl $NEXUS_URL/pythonpkgs/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file _deps/unanimity/ConsensusCore2-*.whl         $NEXUS_URL/pythonpkgs/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  curl -v -n --upload-file dist/GenomicConsensus-*.whl                  $NEXUS_URL/pythonpkgs/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  rm -rf bamboo_artifacts
+  mkdir bamboo_artifacts/gcc-6.4.0/wheelhouse
+  mv _deps/ConsensusCore/dist/ConsensusCore-*.whl bamboo_artifacts/gcc-6.4.0/wheelhouse/ConsensusCore-${ConsensusCore_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  mv _deps/unanimity/ConsensusCore2-*.whl         bamboo_artifacts/gcc-6.4.0/wheelhouse/ConsensusCore2-${ConsensusCore2_VERSION}-cp27-cp27mu-linux_x86_64.whl
+  mv dist/GenomicConsensus-*.whl                  bamboo_artifacts/gcc-6.4.0/wheelhouse/GenomicConsensus-${GenomicConsensus_VERSION}-cp27-cp27mu-linux_x86_64.whl
 fi
