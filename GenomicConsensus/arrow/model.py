@@ -68,7 +68,7 @@ class ArrowConfig(object):
                  minAccuracy=0.82,
                  maskRadius=0,
                  maskErrorRate=0.5,
-                 callDiploid=False):
+                 polishDiploid=False):
 
         self.minMapQV                   = minMapQV
         self.minPoaCoverage             = minPoaCoverage
@@ -85,7 +85,7 @@ class ArrowConfig(object):
         self.minAccuracy                = minAccuracy
         self.maskRadius                 = maskRadius
         self.maskErrorRate              = maskErrorRate
-        self.callDiploid                = callDiploid
+        self.polishDiploid              = polishDiploid
 
     def extractMappedRead(self, aln, windowStart):
         """

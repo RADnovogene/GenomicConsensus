@@ -80,7 +80,7 @@ class VariantsVcfWriter(object):
                 #   correction required
                 ref = var.refPrev + var.refSeq
                 if var.isHeterozygous:
-                    alt = ",".join(var.readPrev + seq for seq in (var.readSeq1, var.readSeq1))
+                    alt = ",".join(var.readPrev + seq for seq in (var.readSeq1, var.readSeq2))
                 else:
                     alt = var.readPrev + var.readSeq1
             # substitution
