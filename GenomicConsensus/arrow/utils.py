@@ -122,13 +122,12 @@ def refineConsensus(ai, arrowConfig):
     """
     cfg = cc.PolishConfig(arrowConfig.maxIterations,
                           arrowConfig.mutationSeparation,
-                          arrowConfig.mutationNeighborhood,
-                          arrowConfig.callDiploid)
-    if arrowConfig.maskRadius and not arrowConfig.callDiploid:
+                          arrowConfig.mutationNeighborhood)
+    if arrowConfig.maskRadius:
         _ = cc.Polish(ai, cfg)
         ai.MaskIntervals(arrowConfig.maskRadius, arrowConfig.maskErrorRate)
     polishResult = cc.Polish(ai, cfg)
-    return str(ai), polishResult.hasConverged, polishResult.diploidSites
+    return str(ai), polishResult.hasConverged
 
 def consensusConfidence(ai, positions=None):
     """
@@ -359,41 +358,38 @@ def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None
     contain the alns objects that were actually used to compute the
     consensus (those not filtered out).
     """
-    refId, refStart, refEnd = refWindow
+    _, refStart, refEnd = refWindow
 
     if alnsUsed is not None:
         assert alnsUsed == []
 
-    if not arrowConfig.callDiploid:
-        if draft is None:
-            # Compute the POA consensus, which is our initial guess, and
-            # should typically be > 99.5% accurate
-            fwdSequences = [ a.read(orientation="genomic", aligned=False)
-                             for a in alns
-                             if a.spansReferenceRange(refStart, refEnd) ]
-            assert len(fwdSequences) >= arrowConfig.minPoaCoverage
+    if draft is None:
+        # Compute the POA consensus, which is our initial guess, and
+        # should typically be > 99.5% accurate
+        fwdSequences = [ a.read(orientation="genomic", aligned=False)
+                         for a in alns
+                         if a.spansReferenceRange(refStart, refEnd) ]
+        assert len(fwdSequences) >= arrowConfig.minPoaCoverage
 
-            try:
-                p = cc.PoaConsensus.FindConsensus(fwdSequences[:arrowConfig.maxPoaCoverage])
-            except Exception:
-                logging.info("%s: POA could not be generated" % (refWindow,))
-                return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
-                                                      refWindow, refSequence), []
-            draft = p.Sequence
+        try:
+            p = cc.PoaConsensus.FindConsensus(fwdSequences[:arrowConfig.maxPoaCoverage])
+        except Exception:
+            logging.info("%s: POA could not be generated" % (refWindow,))
+            return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
+                                                  refWindow, refSequence)
+        draft = p.Sequence
 
-        ga = cc.Align(refSequence, draft)
+    ga = cc.Align(refSequence, draft)
 
     # Extract reads into ConsensusCore2-compatible objects, and map them into the
     # coordinates relative to the POA consensus
     mappedReads = [ arrowConfig.extractMappedRead(aln, refStart) for aln in alns ]
-
-    if not arrowConfig.callDiploid:
-        queryPositions = cc.TargetToQueryPositions(ga)
-        mappedReads = [ lifted(queryPositions, mr) for mr in mappedReads ]
+    queryPositions = cc.TargetToQueryPositions(ga)
+    mappedReads = [ lifted(queryPositions, mr) for mr in mappedReads ]
 
     # Load the mapped reads into the mutation scorer, and iterate
     # until convergence.
-    ai = cc.Integrator(refSequence if arrowConfig.callDiploid else draft, cc.IntegratorConfig(arrowConfig.minZScore))
+    ai = cc.Integrator(draft, cc.IntegratorConfig(arrowConfig.minZScore))
     coverage = 0
     for i, mr in enumerate(mappedReads):
         if (mr.TemplateEnd <= mr.TemplateStart or
@@ -415,79 +411,31 @@ def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None
             if alnsUsed is not None:
                 alnsUsed.append(alns[i])
 
-    if not arrowConfig.callDiploid:
-        # standard haploid
-        if coverage < arrowConfig.minPoaCoverage:
-            logging.info("%s: Inadequate coverage to call consensus" % (refWindow,))
-            return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
-                                                  refWindow, refSequence), []
+    if coverage < arrowConfig.minPoaCoverage:
+        logging.info("%s: Inadequate coverage to call consensus" % (refWindow,))
+        return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
+                                              refWindow, refSequence)
 
-        if not polish:
-            confidence = np.zeros(len(draft), dtype=int)
-            return ArrowConsensus(refWindow, draft, confidence, ai), []
+    if not polish:
+        confidence = np.zeros(len(draft), dtype=int)
+        return ArrowConsensus(refWindow, draft, confidence, ai)
 
-        # Iterate until covergence
-        _, converged, _ = refineConsensus(ai, arrowConfig)
-
-        if converged:
-            arrowCss = str(ai)
-            if arrowConfig.computeConfidence:
-                confidence = consensusConfidence(ai)
-            else:
-                confidence = np.zeros(shape=len(arrowCss), dtype=int)
-            return ArrowConsensus(refWindow,
-                                 arrowCss,
-                                 confidence,
-                                 ai), []
+    # Iterate until covergence
+    _, converged = refineConsensus(ai, arrowConfig)
+    if converged:
+        arrowCss = str(ai)
+        if arrowConfig.computeConfidence:
+            confidence = consensusConfidence(ai)
         else:
-            logging.info("%s: Arrow did not converge to MLE" % (refWindow,))
-            return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
-                                                  refWindow, refSequence), []
+            confidence = np.zeros(shape=len(arrowCss), dtype=int)
+        return ArrowConsensus(refWindow,
+                              arrowCss,
+                              confidence,
+                              ai)
     else:
-        # diploid
-        _, converged, diploidSites = refineConsensus(ai, arrowConfig)
-        if not converged:
-            logging.info("%s: Arrow did not converge to MLE" % (refWindow,))
-            return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
-                                                  refWindow, refSequence), []
-
-        css = ArrowConsensus(refWindow,
-                             refSequence,
-                             confidence,
-                             ai,
-                             diploidSites)
-
-        diploVariants = []
-        for i in diploidSites:
-            refPos = refStart + i.pos
-
-            curRefBase = refSequence[i.pos]
-            prevRefBase = refSequence[i.pos - 1] if i.pos > 0 else 'N'
-
-            # insertions
-            if i.mutType == cc.MutationType_INSERTION:
-                diploVariants.append(Variant(refId, refPos, refPos, "",
-                                             i.mutants[0], i.mutants[1],
-                                             frequency1=0.5, frequency2=0.5,
-                                             refPrev=prevRefBase, readPrev=prevRefBase))
-                diploVariants[-1].confidence = i.pvalue.value()
-                diploVariants[-1].coverage = coverage
-
-            elif i.mutType == cc.MutationType_SUBSTITUTION:
-                diploVariants.append(Variant(refId, refPos, refPos+1, curRefBase,
-                                             i.mutants[0], i.mutants[1],
-                                             frequency1=0.5, frequency2=0.5,
-                                             refPrev=prevRefBase, readPrev=prevRefBase))
-                diploVariants[-1].confidence = i.pvalue.value()
-                diploVariants[-1].coverage = coverage
-
-            elif i.mutType == cc.MutationType_DELETION:
-                # ignore for the moment
-                pass
-            else:
-                logging.debug("Exceptional mutation found", i)
-
-        return css, diploVariants
+        logging.info("%s: Arrow did not converge to MLE" % (refWindow,))
+        return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
+                                              refWindow, refSequence)
 
 
 def coverageInWindow(refWin, hits):

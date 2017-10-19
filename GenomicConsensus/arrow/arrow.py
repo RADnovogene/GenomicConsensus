@@ -52,7 +52,7 @@ def consensusAndVariantsForWindow(alnFile, refWindow, referenceContig,
                                   depthLimit, arrowConfig):
     """
     High-level routine for calling the consensus for a
-    window of the genome given a BAM file.
+    window of the genome given a cmp.h5.
 
     Identifies the coverage contours of the window in order to
     identify subintervals where a good consensus can be called.
@@ -113,29 +113,25 @@ def consensusAndVariantsForWindow(alnFile, refWindow, referenceContig,
                            " ".join([str(hit.readName) for hit in alns])))
 
             alnsUsed = [] if options.reportEffectiveCoverage else None
-            css, diploidVars = U.consensusForAlignments(subWin,
-                                                        intRefSeq,
-                                                        clippedAlns,
-                                                        arrowConfig,
-                                                        alnsUsed=alnsUsed)
+            css = U.consensusForAlignments(subWin,
+                                           intRefSeq,
+                                           clippedAlns,
+                                           arrowConfig,
+                                           alnsUsed=alnsUsed)
 
-            if arrowConfig.callDiploid:
-                filteredVars = diploidVars
-            else:
-                # Tabulate the coverage implied by these alignments, as
-                # well as the post-filtering ("effective") coverage
-                siteCoverage = U.coverageInWindow(subWin, alns)
-                effectiveSiteCoverage = U.coverageInWindow(subWin, alnsUsed) if options.reportEffectiveCoverage else None
+            # Tabulate the coverage implied by these alignments, as
+            # well as the post-filtering ("effective") coverage
+            siteCoverage = U.coverageInWindow(subWin, alns)
+            effectiveSiteCoverage = U.coverageInWindow(subWin, alnsUsed) if options.reportEffectiveCoverage else None
 
-                variants_ = U.variantsFromConsensus(subWin, windowRefSeq,
-                                                    css.sequence, css.confidence, siteCoverage, effectiveSiteCoverage,
-                                                    options.aligner,
-                                                    ai=None)
+            variants_ = U.variantsFromConsensus(subWin, windowRefSeq,
+                                                css.sequence, css.confidence, siteCoverage, effectiveSiteCoverage,
+                                                options.aligner,
+                                                ai=None)
 
-                filteredVars =  filterVariants(options.minCoverage,
-                                               options.minConfidence,
-                                               variants_)
-
+            filteredVars =  filterVariants(options.minCoverage,
+                                           options.minConfidence,
+                                           variants_)
             # Annotate?
             if options.annotateGFF:
                 annotateVariants(filteredVars, clippedAlns)
@@ -258,6 +254,9 @@ def configure(options, alnFile):
         raise U.IncompatibleDataException(
             "The Arrow algorithm requires a BAM file containing standard (non-CCS) reads." )
 
+    if options.diploid:
+        logging.warn("Diploid analysis not yet supported under Arrow model.")
+
     # load parameters from file
     if options.parametersFile:
         logging.info("Loading model parameters from: ({0})".format(options.parametersFile))
@@ -297,8 +296,7 @@ def configure(options, alnFile):
                          minZScore=options.minZScore,
                          minAccuracy=options.minAccuracy,
                          maskRadius=options.maskRadius,
-                         maskErrorRate=options.maskErrorRate,
-                         callDiploid=options.diploid)
+                         maskErrorRate=options.maskErrorRate)
 
 def slaveFactories(threaded):
     # By default we use slave processes. The tuple ordering is important.
