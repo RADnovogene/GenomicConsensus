@@ -52,7 +52,7 @@ def consensusAndVariantsForWindow(alnFile, refWindow, referenceContig,
                                   depthLimit, arrowConfig):
     """
     High-level routine for calling the consensus for a
-    window of the genome given a cmp.h5.
+    window of the genome given a BAM file.
 
     Identifies the coverage contours of the window in order to
     identify subintervals where a good consensus can be called.
@@ -124,10 +124,10 @@ def consensusAndVariantsForWindow(alnFile, refWindow, referenceContig,
             siteCoverage = U.coverageInWindow(subWin, alns)
             effectiveSiteCoverage = U.coverageInWindow(subWin, alnsUsed) if options.reportEffectiveCoverage else None
 
-            variants_ = U.variantsFromConsensus(subWin, windowRefSeq,
-                                                css.sequence, css.confidence, siteCoverage, effectiveSiteCoverage,
-                                                options.aligner,
-                                                ai=None)
+            variants_, newPureCss = U.variantsFromConsensus(subWin, windowRefSeq, css.sequence, css.confidence,
+                                                            siteCoverage, effectiveSiteCoverage,
+                                                            options.aligner, ai=None,
+                                                            diploid=arrowConfig.polishDiploid)
 
             filteredVars =  filterVariants(options.minCoverage,
                                            options.minConfidence,
@@ -137,6 +137,12 @@ def consensusAndVariantsForWindow(alnFile, refWindow, referenceContig,
                 annotateVariants(filteredVars, clippedAlns)
 
             variants += filteredVars
+
+            # The nascent consensus sequence might contain ambiguous bases, these
+            # need to be removed as software in the wild cannot deal with such
+            # characters and we only use IUPAC for *internal* bookkeeping.
+            if arrowConfig.polishDiploid:
+                css.sequence = newPureCss
 
             # Dump?
             maybeDumpEvidence = \
@@ -255,7 +261,10 @@ def configure(options, alnFile):
             "The Arrow algorithm requires a BAM file containing standard (non-CCS) reads." )
 
     if options.diploid:
-        logging.warn("Diploid analysis not yet supported under Arrow model.")
+        logging.info(
+            "Diploid polishing in the Arrow model is in *BETA* mode.\n"
+            "Any multi-base string that appears in annotation files\n"
+            "is not phased!")
 
     # load parameters from file
     if options.parametersFile:
@@ -296,7 +305,8 @@ def configure(options, alnFile):
                          minZScore=options.minZScore,
                          minAccuracy=options.minAccuracy,
                          maskRadius=options.maskRadius,
-                         maskErrorRate=options.maskErrorRate)
+                         maskErrorRate=options.maskErrorRate,
+                         polishDiploid=options.diploid)
 
 def slaveFactories(threaded):
     # By default we use slave processes. The tuple ordering is important.

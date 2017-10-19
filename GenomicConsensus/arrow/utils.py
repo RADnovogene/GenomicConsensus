@@ -115,14 +115,15 @@ def bestSubset(mutationsAndScores, separation):
 
     return output
 
-def refineConsensus(ai, arrowConfig):
+def refineConsensus(ai, arrowConfig, polishDiploid=False):
     """
     Given a MultiReadMutationScorer, identify and apply favorable
     template mutations.  Return (consensus, didConverge) :: (str, bool)
     """
     cfg = cc.PolishConfig(arrowConfig.maxIterations,
                           arrowConfig.mutationSeparation,
-                          arrowConfig.mutationNeighborhood)
+                          arrowConfig.mutationNeighborhood,
+                          polishDiploid)
     if arrowConfig.maskRadius:
         _ = cc.Polish(ai, cfg)
         ai.MaskIntervals(arrowConfig.maskRadius, arrowConfig.maskErrorRate)
@@ -137,6 +138,49 @@ def consensusConfidence(ai, positions=None):
     consensus (str(ai)).
     """
     return np.array(np.clip(cc.ConsensusQualities(ai), 0, 93), dtype=np.uint8)
+
+IUPACdict = {
+    'N' : ('N'),
+    'n' : ('n'),
+    'A' : ('A'),
+    'a' : ('a'),
+    'C' : ('C'),
+    'c' : ('c'),
+    'G' : ('G'),
+    'g' : ('g'),
+    'T' : ('T'),
+    't' : ('t'),
+    'M' : ('A', 'C'),
+    'm' : ('a', 'c'),
+    'R' : ('A', 'G'),
+    'r' : ('a', 'g'),
+    'W' : ('A', 'T'),
+    'w' : ('a', 't'),
+    'S' : ('C', 'G'),
+    's' : ('c', 'g'),
+    'Y' : ('C', 'T'),
+    'y' : ('c', 't'),
+    'K' : ('G', 'T'),
+    'k' : ('g', 't')}
+
+def splitupIUPAC(css):
+    listSeq1 = [IUPACdict[x][0] for x in css]
+    listSeq2 = [IUPACdict[x][-1] for x in css]
+
+    if listSeq1 == listSeq2:
+        # haploid
+        readSeq1 = ''.join(listSeq1)
+        readSeq2 = None
+        freq1 = None
+        freq2 = None
+    else:
+        # diploid
+        readSeq1 = ''.join(listSeq1)
+        readSeq2 = ''.join(listSeq2)
+        freq1 = 0.5
+        freq2 = 0.5
+
+    return readSeq1, readSeq2, freq1, freq2
 
 def variantsFromAlignment(a, refWindow, cssQvInWindow=None, siteCoverage=None, effectiveSiteCoverage=None):
     """
@@ -172,10 +216,16 @@ def variantsFromAlignment(a, refWindow, cssQvInWindow=None, siteCoverage=None, e
             pass
         elif code == "R":
             assert len(css)==len(ref)
-            variant = Variant(refId, refPos, refPos+len(css), ref, css,
+            css, readSeq2, freq1, freq2 = splitupIUPAC(css)
+            variant = Variant(refId=refId, refStart=refPos, refEnd=refPos+len(css),
+                              refSeq=ref, readSeq1=css, readSeq2=readSeq2,
+                              frequency1=freq1, frequency2=freq2,
                               refPrev=refPrev, readPrev=cssPrev)
         elif code == "I":
-            variant = Variant(refId, refPos, refPos, "", css,
+            css, readSeq2, freq1, freq2 = splitupIUPAC(css)
+            variant = Variant(refId=refId, refStart=refPos, refEnd=refPos,
+                              refSeq="", readSeq1=css, readSeq2=readSeq2,
+                              frequency1=freq1, frequency2=freq2,
                               refPrev=refPrev, readPrev=cssPrev)
         elif code == "D":
             variant = Variant(refId, refPos, refPos + len(ref), ref, "",
@@ -274,24 +324,68 @@ def scoreMatrix(ai):
     rowNames = readNames
     return (rowNames, columnNames, baselineScores, scoreMatrix)
 
+def constructIUPACfreeConsensus(a):
+    targetAln = a.Target()
+    queryAln = a.Query()
+
+    assert len(targetAln) == len(queryAln)
+
+    pureCss = []
+
+    for i in xrange(len(queryAln)):
+        curBase = queryAln[i]
+
+        if curBase != '-':
+            if curBase == 'N' or curBase == 'n':
+                newBase = curBase
+            elif targetAln[i] in IUPACdict[curBase]:
+                # construct new sequence with a
+                # minimum of divergence, i.e.
+                # target: A
+                # query:  R (=A+G)
+                # -> new base = A
+                newBase = targetAln[i]
+            else:
+                newBase = IUPACdict[curBase][0]
+
+            pureCss.append(newBase)
+
+    newCss = ''.join(pureCss)
+
+    # Be absolutely sure that *really* all
+    # ambiguous bases have been removed.
+    for i in ('M', 'm', 'R', 'r', 'W', 'w', 'S', 's', 'Y', 'y', 'K', 'k'):
+        assert newCss.find(i) == -1
+
+    return newCss
 
 def variantsFromConsensus(refWindow, refSequenceInWindow, cssSequenceInWindow,
                           cssQvInWindow=None, siteCoverage=None, effectiveSiteCoverage=None,
-                          aligner="affine", ai=None):
+                          aligner="affine", ai=None, diploid=False):
     """
     Compare the consensus and the reference in this window, returning
     a list of variants.
     """
     refId, refStart, refEnd = refWindow
 
-    if aligner == "affine":
-        align = cc.AlignAffine
+    if diploid:
+        align = cc.AlignAffineIupac
     else:
-        align = cc.Align
+        newCss = ""
+        if aligner == "affine":
+            align = cc.AlignAffine
+        else:
+            align = cc.Align
 
     ga = align(refSequenceInWindow, cssSequenceInWindow)
 
-    return variantsFromAlignment(ga, refWindow, cssQvInWindow, siteCoverage, effectiveSiteCoverage)
+    if diploid:
+        newCss = constructIUPACfreeConsensus(ga)
+        # new de-IUPACed sequence still
+        # needs to be of same length
+        assert(len(newCss) == len(cssSequenceInWindow))
+
+    return variantsFromAlignment(ga, refWindow, cssQvInWindow, siteCoverage, effectiveSiteCoverage), newCss
 
 
 def filterAlns(refWindow, alns, arrowConfig):
@@ -421,21 +515,34 @@ def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None
         return ArrowConsensus(refWindow, draft, confidence, ai)
 
     # Iterate until covergence
-    _, converged = refineConsensus(ai, arrowConfig)
+    _, converged = refineConsensus(ai, arrowConfig, polishDiploid=False)
     if converged:
         arrowCss = str(ai)
         if arrowConfig.computeConfidence:
             confidence = consensusConfidence(ai)
         else:
             confidence = np.zeros(shape=len(arrowCss), dtype=int)
-        return ArrowConsensus(refWindow,
-                              arrowCss,
-                              confidence,
-                              ai)
     else:
         logging.info("%s: Arrow did not converge to MLE" % (refWindow,))
         return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
                                               refWindow, refSequence)
+
+    if arrowConfig.polishDiploid:
+        # additional rounds of diploid polishing
+        _, converged = refineConsensus(ai, arrowConfig, polishDiploid=True)
+        if converged:
+            arrowCss = str(ai)
+            if arrowConfig.computeConfidence:
+                confidence = consensusConfidence(ai)
+            else:
+                confidence = np.zeros(shape=len(arrowCss), dtype=int)
+        else:
+            logging.info("%s: Arrow (diploid) did not converge to optimal solution" % (refWindow,))
+
+    return ArrowConsensus(refWindow,
+                          arrowCss,
+                          confidence,
+                          ai)
 
 
 def coverageInWindow(refWin, hits):
