@@ -46,9 +46,9 @@ def gffVariantFrequency(var):
     if var.frequency1==None:
         return None
     elif var.isHeterozygous:
-        return "{0:.3f}/{1:.3f}".format(var.frequency1, var.frequency2)
+        return "{0:.3g}/{1:.3g}".format(var.frequency1, var.frequency2)
     else:
-        return "{0:.3f}".format(var.frequency1)
+        return "{0:.3g}".format(var.frequency1)
 
 def toGffRecord(var):
     varType  = var.variantType
