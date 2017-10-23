@@ -430,6 +430,13 @@ def sufficientlyAccurate(mappedRead, poaCss, minAccuracy):
     return acc >= minAccuracy
 
 
+def poaConsensus(fwdSequences, arrowConfig):
+    seqLens = [len(seq) for seq in fwdSequences]
+    median = np.median(seqLens)
+    ordSeqs = sorted(fwdSequences, key=lambda seq: abs(len(seq) - median))
+    return cc.PoaConsensus.FindConsensus(ordSeqs[:arrowConfig.maxPoaCoverage])
+
+
 def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None, polish=True,
                            alnsUsed=None):
     """
@@ -466,7 +473,7 @@ def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None
         assert len(fwdSequences) >= arrowConfig.minPoaCoverage
 
         try:
-            p = cc.PoaConsensus.FindConsensus(fwdSequences[:arrowConfig.maxPoaCoverage])
+            p = poaConsensus(fwdSequences, arrowConfig)
         except Exception:
             logging.info("%s: POA could not be generated" % (refWindow,))
             return ArrowConsensus.noCallConsensus(arrowConfig.noEvidenceConsensus,
