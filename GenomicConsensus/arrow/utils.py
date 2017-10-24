@@ -434,7 +434,11 @@ def poaConsensus(fwdSequences, arrowConfig):
     seqLens = [len(seq) for seq in fwdSequences]
     median = np.median(seqLens)
     ordSeqs = sorted(fwdSequences, key=lambda seq: abs(len(seq) - median))
-    return cc.PoaConsensus.FindConsensus(ordSeqs[:arrowConfig.maxPoaCoverage])
+    ordSeqs = ordSeqs[:arrowConfig.maxPoaCoverage]
+    cov = len(ordSeqs)
+    minCov = 1 if cov < 5 else ((cov + 1) / 2 - 1)
+    poaConfig = cc.DefaultPoaConfig(cc.AlignMode_GLOBAL)
+    return cc.PoaConsensus.FindConsensus(ordSeqs, poaConfig, minCov)
 
 
 def consensusForAlignments(refWindow, refSequence, alns, arrowConfig, draft=None, polish=True,
