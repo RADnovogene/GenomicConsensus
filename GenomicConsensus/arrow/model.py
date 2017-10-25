@@ -55,7 +55,7 @@ class ArrowConfig(object):
     def __init__(self,
                  minMapQV=10,
                  minPoaCoverage=3,
-                 maxPoaCoverage=21,
+                 maxPoaCoverage=11,
                  mutationSeparation=10,
                  mutationNeighborhood=20,
                  maxIterations=40,
