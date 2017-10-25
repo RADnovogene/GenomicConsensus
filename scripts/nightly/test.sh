@@ -9,7 +9,7 @@ module load gcc/6.4.0
 module load python/2.7.9 virtualenv
 module load zlib/1.2.5
 module load cmake ninja
-module load swig ccache boost cram
+module load swig/3.0.12 ccache boost cram
 
 set +u
 source venv/bin/activate
