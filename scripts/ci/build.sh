@@ -8,7 +8,7 @@ module load git/2.8.3
 module load gcc/6.4.0
 module load cmake ninja
 module load cram/0.7
-module load swig ccache boost
+module load swig/3.0.12 ccache boost
 CXX="$CXX -static-libstdc++"
 GXX="$CXX"
 export CXX GXX
