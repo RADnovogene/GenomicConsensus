@@ -113,34 +113,36 @@ def consensusAndVariantsForWindow(alnFile, refWindow, referenceContig,
                            " ".join([str(hit.readName) for hit in alns])))
 
             alnsUsed = [] if options.reportEffectiveCoverage else None
-            css, diploidVars = U.consensusForAlignments(subWin,
-                                                        intRefSeq,
-                                                        clippedAlns,
-                                                        arrowConfig,
-                                                        alnsUsed=alnsUsed)
+            css = U.consensusForAlignments(subWin,
+                                           intRefSeq,
+                                           clippedAlns,
+                                           arrowConfig,
+                                           alnsUsed=alnsUsed)
 
-            if arrowConfig.callDiploid:
-                filteredVars = diploidVars
-            else:
-                # Tabulate the coverage implied by these alignments, as
-                # well as the post-filtering ("effective") coverage
-                siteCoverage = U.coverageInWindow(subWin, alns)
-                effectiveSiteCoverage = U.coverageInWindow(subWin, alnsUsed) if options.reportEffectiveCoverage else None
+            # Tabulate the coverage implied by these alignments, as
+            # well as the post-filtering ("effective") coverage
+            siteCoverage = U.coverageInWindow(subWin, alns)
+            effectiveSiteCoverage = U.coverageInWindow(subWin, alnsUsed) if options.reportEffectiveCoverage else None
 
-                variants_ = U.variantsFromConsensus(subWin, windowRefSeq,
-                                                    css.sequence, css.confidence, siteCoverage, effectiveSiteCoverage,
-                                                    options.aligner,
-                                                    ai=None)
+            variants_, newPureCss = U.variantsFromConsensus(subWin, windowRefSeq, css.sequence, css.confidence,
+                                                            siteCoverage, effectiveSiteCoverage,
+                                                            options.aligner, ai=None,
+                                                            diploid=arrowConfig.polishDiploid)
 
-                filteredVars =  filterVariants(options.minCoverage,
-                                               options.minConfidence,
-                                               variants_)
-
+            filteredVars =  filterVariants(options.minCoverage,
+                                           options.minConfidence,
+                                           variants_)
             # Annotate?
             if options.annotateGFF:
                 annotateVariants(filteredVars, clippedAlns)
 
             variants += filteredVars
+
+            # The nascent consensus sequence might contain ambiguous bases, these
+            # need to be removed as software in the wild cannot deal with such
+            # characters and we only use IUPAC for *internal* bookkeeping.
+            if arrowConfig.polishDiploid:
+                css.sequence = newPureCss
 
             # Dump?
             maybeDumpEvidence = \
@@ -258,6 +260,12 @@ def configure(options, alnFile):
         raise U.IncompatibleDataException(
             "The Arrow algorithm requires a BAM file containing standard (non-CCS) reads." )
 
+    if options.diploid:
+        logging.info(
+            "Diploid polishing in the Arrow model is in *BETA* mode.\n"
+            "Any multi-base string that appears in annotation files\n"
+            "is not phased!")
+
     # load parameters from file
     if options.parametersFile:
         logging.info("Loading model parameters from: ({0})".format(options.parametersFile))
@@ -298,7 +306,7 @@ def configure(options, alnFile):
                          minAccuracy=options.minAccuracy,
                          maskRadius=options.maskRadius,
                          maskErrorRate=options.maskErrorRate,
-                         callDiploid=options.diploid)
+                         polishDiploid=options.diploid)
 
 def slaveFactories(threaded):
     # By default we use slave processes. The tuple ordering is important.

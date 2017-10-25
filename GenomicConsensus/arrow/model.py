@@ -55,7 +55,7 @@ class ArrowConfig(object):
     def __init__(self,
                  minMapQV=10,
                  minPoaCoverage=3,
-                 maxPoaCoverage=11,
+                 maxPoaCoverage=21,
                  mutationSeparation=10,
                  mutationNeighborhood=20,
                  maxIterations=40,
@@ -68,7 +68,7 @@ class ArrowConfig(object):
                  minAccuracy=0.82,
                  maskRadius=0,
                  maskErrorRate=0.5,
-                 callDiploid=False):
+                 polishDiploid=False):
 
         self.minMapQV                   = minMapQV
         self.minPoaCoverage             = minPoaCoverage
@@ -85,7 +85,7 @@ class ArrowConfig(object):
         self.minAccuracy                = minAccuracy
         self.maskRadius                 = maskRadius
         self.maskErrorRate              = maskErrorRate
-        self.callDiploid                = callDiploid
+        self.polishDiploid              = polishDiploid
 
     def extractMappedRead(self, aln, windowStart):
         """
