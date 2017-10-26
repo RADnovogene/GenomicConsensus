@@ -32,7 +32,7 @@
 
 __all__ = [ "ArrowEvidence" ]
 
-import h5py, logging, os.path, numpy as np
+import logging, os.path, numpy as np
 from collections import namedtuple
 from itertools import groupby
 from bisect import bisect_left, bisect_right
@@ -41,7 +41,9 @@ from .utils import scoreMatrix
 from .. import reference
 
 class ArrowEvidence(object):
-
+    """If used at runtime, this will require h5py
+    (for storing/loading 'arrow-scores.h5')
+    """
     Mutation = namedtuple("Mutation", ("Position", "Type", "FromBase", "ToBase"))
 
     @staticmethod
@@ -105,6 +107,7 @@ class ArrowEvidence(object):
         refWindow = (refName, refStart, refEnd)
         with FastaReader(dir + "/consensus.fa") as fr:
             consensus = next(iter(fr)).sequence
+        import h5py
         with h5py.File(dir + "/arrow-scores.h5", "r") as f:
             scores   = f["Scores"].value
             baselineScores = f["BaselineScores"].value
@@ -143,6 +146,7 @@ class ArrowEvidence(object):
         consensusFasta.writeRecord(windowName + "|arrow", self.consensus)
         consensusFasta.close()
 
+        import h5py
         arrowScoreFile = h5py.File(join(dir, "arrow-scores.h5"))
         arrowScoreFile.create_dataset("Scores", data=self.scores)
         vlen_str = h5py.special_dtype(vlen=str)
@@ -150,6 +154,7 @@ class ArrowEvidence(object):
         arrowScoreFile.create_dataset("ColumnNames", data=self.colNames, dtype=vlen_str)
         arrowScoreFile.create_dataset("BaselineScores", data=self.baselineScores)
         arrowScoreFile.close()
+
         # for aln in alns:
         #     readsFasta.writeRecord(str(aln.rowNumber),
         #                            aln.read(orientation="genomic", aligned=False))
