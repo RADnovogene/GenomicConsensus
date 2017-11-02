@@ -6,7 +6,7 @@ Test Arrow diploid polishing
 
 Run arrow
 
-  $ arrow $INPUT -r $REFERENCE --diploid -o dipl.vcf
+  $ arrow $INPUT -r $REFERENCE --diploid -o dipl.vcf -o cons.fasta
 
 Perfect diploid polishing, found all variants
 
@@ -17,3 +17,14 @@ Perfect diploid polishing, found all variants
   all4merDipl	128	.	C	G,T	93	PASS	DP=100;AF=0.5,0.5
   all4merDipl	194	.	A	AG,AT	93	PASS	DP=100;AF=0.5,0.5
   all4merDipl	247	.	CA	C	93	PASS	DP=100
+
+Ambiguous-free consensus sequence
+
+  $ cat cons.fasta
+  >all4merDipl|arrow
+  GGGATCCTCTAGAATGCAGGGGCTTATAAACGTGTGAACACCATGTATTTTAAGCCACGC
+  ATATCTCTGATTAGATGGAAAAGACAAGTGGGAGAGGCCTTGTTACAGTCCAACTGCACT
+  ACCCGCGCGCAGAAGGACTTCGCTCACATCGGATCCCCTAATGCCGGGTTTCCTGGCGAT
+  AGTAGGTGCTGTCGAGCGGCAGCTAGCGGTCAATTCTATGACCTCGTTGCGTACTCCGAA
+  TCATTGAGCAACCGTCTTTGGTAAATACGAGTTCAGGCAAGCTTGCTGAGGACTAGTAGC
+  T
