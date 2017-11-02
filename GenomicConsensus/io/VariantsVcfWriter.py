@@ -36,12 +36,14 @@ import time
 from textwrap import dedent
 from GenomicConsensus import __VERSION__, reference
 
-def vcfVariantFrequency(var):
+def vcfVariantFrequency(var, labels):
     if var.frequency1 is None:
         return None
     elif var.isHeterozygous:
         denom = var.frequency1 + var.frequency2
-        return "AF={0:.3g},{1:.3g}".format(var.frequency1 / denom, var.frequency2 / denom)
+        names = ['frequency{}'.format(label) for label in labels]
+        freqs = [getattr(var, name) for name in names if getattr(var, name) is not None]
+        return 'AF={}'.format(','.join('{:.3g}'.format(f / denom) for f in freqs))
     else:
         # the frequency is 100%, so no need
         return None
@@ -73,6 +75,7 @@ class VariantsVcfWriter(object):
             pos = var.refStart
             ref = ""
             alt = ""
+            labels = (1, 2)
             # insertion or deletion
             if var.refSeq == "" or var.readSeq1 == "" or \
                     (var.isHeterozygous and var.readSeq2 == ""):
@@ -90,9 +93,20 @@ class VariantsVcfWriter(object):
                 ref = var.refSeq
                 if var.isHeterozygous:
                     alt = ",".join(seq for seq in (var.readSeq1, var.readSeq2))
+                    if var.refSeq == var.readSeq1:
+                        # first variant is same as wildtype
+                        alt = var.readSeq2
+                        labels = (2,)
+                    elif var.refSeq == var.readSeq2:
+                        # second variant is same as wildtype
+                        alt = var.readSeq1
+                        labels = (1,)
+                    else:
+                        # both variants differ from wildtype
+                        alt = ",".join(seq for seq in (var.readSeq1, var.readSeq2))
                 else:
                     alt = var.readSeq1
-            freq = vcfVariantFrequency(var)
+            freq = vcfVariantFrequency(var=var, labels=labels)
             info = "DP={0}".format(var.coverage)
             if freq:
                 info = info + ";" + freq
