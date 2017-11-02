@@ -33,7 +33,7 @@
 
 from __future__ import absolute_import
 
-import argparse, atexit, cProfile, gc, glob, h5py, logging, multiprocessing
+import argparse, atexit, cProfile, gc, glob, logging, multiprocessing
 import os, pstats, random, shutil, tempfile, time, threading, Queue, traceback, pprint
 import functools
 import re
@@ -282,8 +282,8 @@ class ToolRunner(object):
         if options.pdbAtStartup:
             ipdb.set_trace()
 
-        logging.info("h5py version: %s" % h5py.version.version)
-        logging.info("hdf5 version: %s" % h5py.version.hdf5_version)
+        #logging.info("h5py version: %s" % h5py.version.version)
+        #logging.info("hdf5 version: %s" % h5py.version.hdf5_version)
         logging.info("ConsensusCore version: %s" %
                      (consensusCoreVersion() or "ConsensusCore unavailable"))
         logging.info("ConsensusCore2 version: %s" %

@@ -33,7 +33,7 @@
 __all__ = [ "dumpEvidence",
             "QuiverEvidence" ]
 
-import h5py, logging, os.path, numpy as np
+import logging, os.path, numpy as np
 from collections import namedtuple
 from itertools import groupby
 from bisect import bisect_left, bisect_right
@@ -44,6 +44,8 @@ from .. import reference
 def dumpEvidence(evidenceDumpBaseDirectory,
                  refWindow, refSequence, alns,
                  quiverConsensus):
+    """This will import h5py at runtime.
+    """
     # Format of evidence dump:
     # evidence_dump/
     #   ref000001/
@@ -77,6 +79,7 @@ def dumpEvidence(evidenceDumpBaseDirectory,
     consensusFasta.close()
 
     rowNames, columnNames, baselineScores, scores = scoreMatrix(quiverConsensus.mms)
+    import h5py
     quiverScoreFile = h5py.File(join(windowDirectory, "quiver-scores.h5"))
     quiverScoreFile.create_dataset("Scores", data=scores)
     vlen_str = h5py.special_dtype(vlen=str)
@@ -94,8 +97,9 @@ class QuiverEvidence(object):
     """
     An experimental reader class for quiver evidence dumps produced by
     quiver --dumpEvidence
-    """
 
+    This will import h5py at runtime.
+    """
     Mutation = namedtuple("Mutation", ("Position", "Type", "FromBase", "ToBase"))
 
     @staticmethod
@@ -137,6 +141,7 @@ class QuiverEvidence(object):
         with FastaReader(path + "/consensus.fa") as fr:
             consensus = next(iter(fr)).sequence
 
+        import h5py
         with h5py.File(path + "/quiver-scores.h5", "r") as f:
             scores   = f["Scores"].value
             baselineScores = f["BaselineScores"].value
