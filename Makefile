@@ -11,6 +11,7 @@ unit-tests:
 	py.test --junit-xml=nosetests.xml tests/unit
 
 # Note: We need at least cram/0.7 for '--xunit-file'
+# Note: The cram tests often need h5py.
 
 basic-tests:
 	# End-to-end tests
