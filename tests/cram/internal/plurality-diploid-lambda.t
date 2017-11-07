@@ -31,9 +31,9 @@ Take a look at the variants...
   lambda_NEB3011 . substitution 1250 1250 . . . reference=G;variantSeq=G/T;frequency=56/21;coverage=100;confidence=40
 
   $ grep -v "#" variants.vcf | head -3 | untabify
-  lambda_NEB3011 250 . A C,A 40 PASS DP=100;AF=0.511,0.489
-  lambda_NEB3011 750 . T T,A 40 PASS DP=100;AF=0.69,0.31
-  lambda_NEB3011 1250 . G G,T 40 PASS DP=100;AF=0.727,0.273
+  lambda_NEB3011 250 . A C 40 PASS DP=100;AF=0.511
+  lambda_NEB3011 750 . T A 40 PASS DP=100;AF=0.31
+  lambda_NEB3011 1250 . G T 40 PASS DP=100;AF=0.273
 
 Use gffsubtract.pl to compare variants to expected.  Note that the
 gffsubtract tool just looks at the coordinates, not the actual content
