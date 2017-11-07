@@ -1,0 +1,61 @@
+Bite-sized test of data with zero pulse widths!
+
+  $ export DATA=$TESTDIR/../data
+  $ export INPUT=$DATA/zero-pws/zero-pws.subreads.bam
+  $ export REFERENCE=$DATA/zero-pws/zero-pws.ref.fa
+
+Run variantCaller
+
+  $ variantCaller $INPUT -r $REFERENCE -o css.fa -o css.fq
+
+Just test the presence of a consensus being gracefully made
+
+  $ cat css.fa
+  >c2363|arrow
+  ctctttttccggctggaaccatggaggtgttagaagagaagaagaaggaggttcctgctg
+  tgccAGAAACCCTTAAGAAAAAGCGAAGGAATTTCGCAGAGCTGAAGATCAAGCGCCTGA
+  GAAAGAAGTTTGCCCAAAAGATGCTTCGAAAGGCAAGGAGGAAGCTTATCTATGAAAAAG
+  CAAAGCACTATCACAAGGAATATAGGCAGATGTACAGAACTGAAATTCGAATGGCGAGGA
+  TGGCAAGAAAAGCTGGCAACTTCTATGTACCTGCAGAACCCAAATTGGCGTTTGTCATCA
+  GAATCAGAGGTATCAATGGAGTGAGCCCAAAGGTTCGAAAGGTGTTGCAGCTTCTTCGCC
+  TTCGTCAAATCTTCAATGGAACCTTTGTGAAGCTCAACAAGGCTTCGATTAACATGCTGA
+  GGATTGTAGAGCCATATATTGCATGGGGGTACCCCAATCTGAAGTCAGTAAATGAACTAA
+  TCTACAAGCGTGGTTATGGCAAAATCAATAAGAAGCGAATTGCTTTGACAGATAACGCTT
+  TGATTGCTCGATCTCTTGGTAAATACGGCATCATCTGCATGGAGGATTTGATTCATGAGA
+  TCTATACTGTTGGAAAACGCTTCAAAGAGGCAAATAACTTCCTGTGGCCCTTCAAATTGT
+  CTTCTCCACGAGGTGGAATGAAGAAAAAGACCACCCATTTTGTAGAAGGTGGAGATGCTG
+  GCAACAGGGAGGACCAGATCAACAGGCTTATTAGAAGAATGAACTAAGGTGTCTACCATG
+  ATTatttttctaagctggttggttaataaacagtacctgctc
+
+  $ fold -60 css.fq
+  @c2363|arrow
+  ctctttttccggctggaaccatggaggtgttagaagagaagaagaaggaggttcctgctg
+  tgccAGAAACCCTTAAGAAAAAGCGAAGGAATTTCGCAGAGCTGAAGATCAAGCGCCTGA
+  GAAAGAAGTTTGCCCAAAAGATGCTTCGAAAGGCAAGGAGGAAGCTTATCTATGAAAAAG
+  CAAAGCACTATCACAAGGAATATAGGCAGATGTACAGAACTGAAATTCGAATGGCGAGGA
+  TGGCAAGAAAAGCTGGCAACTTCTATGTACCTGCAGAACCCAAATTGGCGTTTGTCATCA
+  GAATCAGAGGTATCAATGGAGTGAGCCCAAAGGTTCGAAAGGTGTTGCAGCTTCTTCGCC
+  TTCGTCAAATCTTCAATGGAACCTTTGTGAAGCTCAACAAGGCTTCGATTAACATGCTGA
+  GGATTGTAGAGCCATATATTGCATGGGGGTACCCCAATCTGAAGTCAGTAAATGAACTAA
+  TCTACAAGCGTGGTTATGGCAAAATCAATAAGAAGCGAATTGCTTTGACAGATAACGCTT
+  TGATTGCTCGATCTCTTGGTAAATACGGCATCATCTGCATGGAGGATTTGATTCATGAGA
+  TCTATACTGTTGGAAAACGCTTCAAAGAGGCAAATAACTTCCTGTGGCCCTTCAAATTGT
+  CTTCTCCACGAGGTGGAATGAAGAAAAAGACCACCCATTTTGTAGAAGGTGGAGATGCTG
+  GCAACAGGGAGGACCAGATCAACAGGCTTATTAGAAGAATGAACTAAGGTGTCTACCATG
+  ATTatttttctaagctggttggttaataaacagtacctgctc
+  +
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!!!NXG~~s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~u~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  gPZ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
