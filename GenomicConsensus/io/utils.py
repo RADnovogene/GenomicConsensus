@@ -32,7 +32,7 @@
 
 __all__ = ["loadCmpH5", "loadBam"]
 
-import h5py, os.path
+import os.path
 from pbcore.io import AlignmentSet
 
 

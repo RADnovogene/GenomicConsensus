@@ -22,7 +22,6 @@ dependencies:
         - pip install --upgrade --no-deps git+https://github.com/PacificBiosciences/pbcommand.git
         - pip install numpy # deps for pbcore
         - pip install cython
-        - pip install h5py
         - pip install pysam
         - pip install --upgrade --no-deps git+https://github.com/PacificBiosciences/pbcore.git
         - pip install cram pytest coverage
