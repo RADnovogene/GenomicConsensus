@@ -4,11 +4,11 @@ set -euo pipefail
 echo "# DEPENDENCIES"
 echo "## Load modules"
 type module >& /dev/null || . /mnt/software/Modules/current/init/bash
-module load git/2.8.3
-module load gcc/6.4.0
+module load git
+module load gcc
 module load cmake ninja
-module load cram/0.7
-module load swig/3.0.12 ccache boost
+module load cram
+module load swig ccache boost
 CXX="$CXX -static-libstdc++"
 GXX="$CXX"
 export CXX GXX
@@ -85,7 +85,7 @@ coverage run --source GenomicConsensus -m py.test --verbose --junit-xml=nosetest
 #   quiver-tinyLambda-coverage-islands.t,
 # was moved from cram/internal. It needs some GNU modules.
 # If that becomes a problem, just move it back to cram/internal.
-module load mummer/3.23
+module load mummer
 module load exonerate/2.0.0
 
 # Run fairly fast cram tests.

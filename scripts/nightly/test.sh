@@ -2,14 +2,14 @@
 echo "# DEPENDENCIES"
 echo "## Load modules"
 source /mnt/software/Modules/current/init/bash
-module load git/2.8.3
-module load gcc/6.4.0
+module load git
+module load gcc
 module load python/2.7.9 virtualenv
-module load zlib/1.2.5
+module load zlib
 module load cmake ninja
-module load swig/3.0.12 ccache boost cram
-module load cram/0.7
-module load mummer/3.23
+module load swig ccache boost cram
+module load cram
+module load mummer
 module load exonerate/2.0.0
 module load blasr/2.3.0
 module load gfftools/dalexander
