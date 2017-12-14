@@ -4,7 +4,7 @@ echo "## Load modules"
 source /mnt/software/Modules/current/init/bash
 module load git
 module load gcc
-module load python/2.7.9 virtualenv
+module load python/2
 module load zlib
 module load cmake ninja
 module load swig ccache boost cram
