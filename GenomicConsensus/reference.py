@@ -92,7 +92,7 @@ def anyKeyToId(stringKey):
         # at this  point, refId can still be the old numeric identifier
         return byId[refId].name
     else:
-        raise Exception, "Unknown reference name: %s" % stringKey
+        raise Exception("Unknown reference name: %s" % stringKey)
 
 def sequenceInWindow(window):
     refId, refStart, refEnd = window

@@ -150,7 +150,7 @@ def join(consensi):
     assert len(consensi) >= 1
     sortedConsensi = sorted(consensi)
     if not areContiguous([cssChunk.refWindow for cssChunk in sortedConsensi]):
-        raise ValueError, "Consensus chunks must be contiguous"
+        raise ValueError("Consensus chunks must be contiguous")
 
     joinedRefWindow  = (sortedConsensi[0].refWindow[0],
                         sortedConsensi[0].refWindow[1],

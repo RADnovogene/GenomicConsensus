@@ -18,7 +18,7 @@ def ungappedPulseArray(a):
     elif dtype == np.int8:
         return a[a != ord("-")]
     else:
-        raise Exception, "Invalid pulse array type"
+        raise Exception("Invalid pulse array type")
 
 def _makeBaseFeatureAccessor(featureName):
     def f(self, aligned=True, orientation="native"):

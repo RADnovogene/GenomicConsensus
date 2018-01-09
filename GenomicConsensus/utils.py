@@ -31,6 +31,7 @@
 # Author: David Alexander
 
 from __future__ import absolute_import
+from __future__ import print_function
 import ast
 import math, numpy as np, os.path, sys, itertools
 
@@ -43,7 +44,7 @@ class DieException(Exception):
     """
 
 def die(msg):
-    print >>sys.stderr, msg
+    print(msg, file=sys.stderr)
     raise DieException(msg)
     #sys.exit(-1)
 
@@ -124,7 +125,7 @@ def readsInWindow(alnFile, window, depthLimit=None,
                         "long-and-strand-balanced"}
 
     if stratum is not None:
-        raise ValueError, "stratum needs to be reimplemented"
+        raise ValueError("stratum needs to be reimplemented")
 
     def depthCap(iter):
         if depthLimit is not None:

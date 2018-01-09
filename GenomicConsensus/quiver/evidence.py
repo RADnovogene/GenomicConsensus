@@ -65,7 +65,7 @@ def dumpEvidence(evidenceDumpBaseDirectory,
     logging.info("Dumping evidence to %s" % (windowDirectory,))
 
     if os.path.exists(windowDirectory):
-        raise Exception, "Evidence dump does not expect directory %s to exist." % windowDirectory
+        raise Exception("Evidence dump does not expect directory %s to exist." % windowDirectory)
     os.makedirs(windowDirectory)
     refFasta       = FastaWriter(join(windowDirectory, "reference.fa"))
     readsFasta     = FastaWriter(join(windowDirectory, "reads.fa"))

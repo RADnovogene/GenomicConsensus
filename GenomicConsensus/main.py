@@ -32,6 +32,7 @@
 # Author: David Alexander
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import argparse, atexit, cProfile, gc, glob, logging, multiprocessing
 import os, pstats, random, shutil, tempfile, time, threading, Queue, traceback, pprint
@@ -270,7 +271,7 @@ class ToolRunner(object):
         random.seed(42)
 
         if options.pdb or options.pdbAtStartup:
-            print >>sys.stderr, "Process ID: %d" % os.getpid()
+            print("Process ID: %d" % os.getpid(), file=sys.stderr)
             try:
                 import ipdb
             except ImportError:
