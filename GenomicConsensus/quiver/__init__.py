@@ -30,6 +30,8 @@
 
 # Author: David Alexander
 
-import utils
-import model
-import evidence
+from __future__ import absolute_import
+
+from . import utils
+from . import model
+from . import evidence

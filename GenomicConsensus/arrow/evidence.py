@@ -134,7 +134,7 @@ class ArrowEvidence(object):
         logging.info("Dumping evidence to %s" % (dir,))
         join = os.path.join
         if os.path.exists(dir):
-            raise Exception, "Evidence dump does not expect directory %s to exist." % dir
+            raise Exception("Evidence dump does not expect directory %s to exist." % dir)
         os.makedirs(dir)
         #refFasta       = FastaWriter(join(dir, "reference.fa"))
         #readsFasta     = FastaWriter(join(dir, "reads.fa"))
