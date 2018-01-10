@@ -1,5 +1,5 @@
 #################################################################################
-# Copyright (c) 2011-2013, Pacific Biosciences of California, Inc.
+# Copyright (c) 2011-2018, Pacific Biosciences of California, Inc.
 #
 # All rights reserved.
 #
@@ -28,6 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #################################################################################
 
-# Author: David Alexander
+# Author: David Alexander, David Seifert
 
-__VERSION__ = "2.2.2"
+import pkg_resources
+
+__VERSION__ = pkg_resources.get_distribution(__name__).version
