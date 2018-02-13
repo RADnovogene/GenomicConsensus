@@ -29,7 +29,7 @@ echo "## Install pip modules"
 NX3PBASEURL=http://nexus/repository/unsupported/pitchfork/gcc-6.4.0
 NXSABASEURL=http://nexus/repository/maven-snapshots/pacbio/sat
 $PIP install --user \
-  $NX3PBASEURL/pythonpkgs/pysam-0.9.1.4-cp27-cp27mu-linux_x86_64.whl \
+  $NX3PBASEURL/pythonpkgs/pysam-0.13-cp27-cp27mu-linux_x86_64.whl \
   $NX3PBASEURL/pythonpkgs/xmlbuilder-1.0-cp27-none-any.whl \
   $NX3PBASEURL/pythonpkgs/avro-1.7.7-cp27-none-any.whl \
   iso8601 \
