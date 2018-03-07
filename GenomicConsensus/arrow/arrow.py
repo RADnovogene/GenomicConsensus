@@ -1,4 +1,5 @@
 # Authors: David Alexander, Lance Hepler
+from __future__ import absolute_import, division, print_function
 
 import logging, os.path
 import ConsensusCore2 as cc, numpy as np

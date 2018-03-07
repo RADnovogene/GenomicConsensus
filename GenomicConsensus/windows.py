@@ -7,6 +7,7 @@
 #  (includes start, not end)
 #
 # Author: David Alexander
+from __future__ import absolute_import, division, print_function
 
 import numpy as np, math
 from pbcore.io.rangeQueries import projectIntoRange
@@ -150,9 +151,9 @@ def enumerateIntervals(bounds, stride):
     boundaries on multiple of stride.
     """
     def alignDown(chunk, x):
-        return (x/chunk)*chunk
+        return (x//chunk)*chunk
     def alignUp(chunk, x):
-        return int(math.ceil(float(x)/chunk)*chunk)
+        return int(math.ceil(x/chunk)*chunk)
 
     start, end = bounds
     roundStart = alignDown(stride, start)

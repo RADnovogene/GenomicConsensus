@@ -1,3 +1,4 @@
+from __future__ import absolute_import, division, print_function
 
 from nose.tools import assert_equal as EQ
 from GenomicConsensus.quiver.diploid import variantsFromAlignment

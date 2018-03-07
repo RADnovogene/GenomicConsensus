@@ -2,6 +2,7 @@
 This module provides an `AlignmentHitStub` class as well as a group of
 curated stub objects, allowing for decoupled testing.
 """
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 from GenomicConsensus.utils import complement, reverseComplement

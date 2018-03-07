@@ -1,4 +1,5 @@
 # Author: David Alexander
+from __future__ import absolute_import, division, print_function
 
 from GenomicConsensus.quiver.utils import allSingleBaseMutations
 from GenomicConsensus.variants import Variant

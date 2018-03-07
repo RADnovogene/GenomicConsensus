@@ -1,4 +1,5 @@
 # Authors: David Alexander, Lance Hepler
+from __future__ import absolute_import, division, print_function
 
 import numpy as np, itertools, logging, re, sys
 from collections import Counter
@@ -406,7 +407,7 @@ def poaConsensus(fwdSequences, arrowConfig):
     ordSeqs = sorted(fwdSequences, key=lambda seq: abs(len(seq) - median))
     ordSeqs = ordSeqs[:arrowConfig.maxPoaCoverage]
     cov = len(ordSeqs)
-    minCov = 1 if cov < 5 else ((cov + 1) / 2 - 1)
+    minCov = 1 if cov < 5 else ((cov + 1) // 2 - 1)
     poaConfig = cc.DefaultPoaConfig(cc.AlignMode_GLOBAL)
     return cc.PoaConsensus.FindConsensus(ordSeqs, poaConfig, minCov)
 

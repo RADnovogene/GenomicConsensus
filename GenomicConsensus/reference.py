@@ -1,6 +1,5 @@
 # Author: David Alexander
-
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function
 
 import logging, re, numpy as np
 from collections import OrderedDict

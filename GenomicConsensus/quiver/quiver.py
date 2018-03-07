@@ -1,4 +1,5 @@
 # Author: David Alexander
+from __future__ import absolute_import, division, print_function
 
 import logging
 import ConsensusCore as cc, numpy as np

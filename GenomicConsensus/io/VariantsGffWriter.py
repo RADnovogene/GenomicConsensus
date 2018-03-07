@@ -1,4 +1,5 @@
 # Author: David Alexander
+from __future__ import absolute_import, division, print_function
 
 import time
 from pbcore.io import GffWriter, Gff3Record

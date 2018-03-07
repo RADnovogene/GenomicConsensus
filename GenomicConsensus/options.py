@@ -17,7 +17,7 @@
 #    > from options import options
 #  and get the loaded options dictionary.
 #
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function
 import argparse, os, os.path, sys, json
 
 from pbcommand.models import FileTypes, SymbolTypes, get_pbparser
