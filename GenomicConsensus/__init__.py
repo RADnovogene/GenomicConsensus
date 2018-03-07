@@ -1,5 +1,3 @@
 # Author: David Alexander, David Seifert
 
-import pkg_resources
-
-__VERSION__ = pkg_resources.get_distribution(__name__).version
+__VERSION__ = '2.2.2'  # don't forget to update setup.py and doc/conf.py too
