@@ -11,12 +11,12 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+from __future__ import absolute_import, division, print_function
+
 import sys, os
 from os.path import dirname, join
 
-globals = {}
-execfile("../GenomicConsensus/__init__.py", globals)
-__VERSION__ = globals["__VERSION__"]
+__VERSION__ = '2.2.2' # don't forget to update setup.py and GenomicConsensus/__init__.py too
 
 
 # If extensions (or modules to document with autodoc) are in another directory,

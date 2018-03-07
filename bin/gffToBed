@@ -3,6 +3,7 @@
 """
 Convert .gff to .bed format.
 """
+from __future__ import absolute_import, division, print_function
 
 import sys
 import os
@@ -90,7 +91,7 @@ class VariantsBedRecord(BedRecord):
                                     gff.reference,
                                     gff.variantSeq)
         else:
-            print >> sys.stderr, 'Unsupported feature %s found in GFF3 file.' % feature
+            print('Unsupported feature %s found in GFF3 file.' % feature, file=sys.stderr)
 
         return bed
 
@@ -106,11 +107,11 @@ class BedWriter(WriterBase):
         self._outfile.flush()
 
     def writeHeader(self, name, description, useScore):
-        print >> self._outfile, 'track name=%s description="%s" useScore=%d' \
-            % (name, description, useScore)
+        print('track name=%s description="%s" useScore=%d' \
+            % (name, description, useScore), file=self._outfile)
 
     def writeRecord(self, record):
-        print >> self._outfile, str(record)
+        print(str(record), file=self._outfile)
 
 class GffToBed:
     """

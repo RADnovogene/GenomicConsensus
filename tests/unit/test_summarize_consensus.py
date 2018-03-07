@@ -1,8 +1,8 @@
-
 """
 Test summarizeConsensus with synthetic inputs, which should include all
 boundary conditions.
 """
+from __future__ import absolute_import, division, print_function
 
 import subprocess
 import tempfile
