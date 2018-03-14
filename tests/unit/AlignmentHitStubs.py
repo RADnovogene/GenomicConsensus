@@ -2,6 +2,7 @@
 This module provides an `AlignmentHitStub` class as well as a group of
 curated stub objects, allowing for decoupled testing.
 """
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 from GenomicConsensus.utils import complement, reverseComplement
@@ -18,7 +19,7 @@ def ungappedPulseArray(a):
     elif dtype == np.int8:
         return a[a != ord("-")]
     else:
-        raise Exception, "Invalid pulse array type"
+        raise Exception("Invalid pulse array type")
 
 def _makeBaseFeatureAccessor(featureName):
     def f(self, aligned=True, orientation="native"):

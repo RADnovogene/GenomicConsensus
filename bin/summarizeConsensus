@@ -3,6 +3,7 @@
 """
 Augment the alignment_summary.gff file with consensus and variants information.
 """
+from __future__ import absolute_import, division, print_function
 
 from collections import namedtuple, defaultdict
 import argparse
@@ -140,13 +141,13 @@ def run(options):
 
         # Pass any metadata line straight through
         if line[0] == "#":
-            print >>outputAlignmentSummaryGff, line.strip()
+            print(line.strip(), file=outputAlignmentSummaryGff)
             continue
 
         if inHeader:
             # We are at the end of the header -- write the tool-specific headers
             for k, v in headers:
-                print >>outputAlignmentSummaryGff, ("##%s %s" % (k, v))
+                print("##%s %s" % (k, v), file=outputAlignmentSummaryGff)
             inHeader = False
 
         # Parse the line
@@ -160,7 +161,7 @@ def run(options):
             for counterName in counterNames.values():
                 if counterName in summary:
                     line += ";%s=%d" % (counterName, summary[counterName])
-            print >>outputAlignmentSummaryGff, line
+            print(line, file=outputAlignmentSummaryGff)
     return 0
 
 

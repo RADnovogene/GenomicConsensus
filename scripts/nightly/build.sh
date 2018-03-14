@@ -2,17 +2,17 @@
 echo "# DEPENDENCIES"
 echo "## Load modules"
 source /mnt/software/Modules/current/init/bash
-module load git/2.8.3
-module load gcc/6.4.0
-module load python/2.7.9 virtualenv
-module load zlib/1.2.5
+module load git
+module load gcc
+module load python/2
+module load zlib
 module load cmake ninja
-module load swig/3.0.12 ccache boost cram
+module load swig ccache boost cram
 
 echo "## Get into virtualenv"
 if [ ! -d venv ]
 then
-    /mnt/software/v/virtualenv/13.0.1/virtualenv.py venv
+    virtualenv venv
 fi
 
 source venv/bin/activate
@@ -22,7 +22,14 @@ set -vxeuo pipefail
 
 ## Install pip modules
 pip install --upgrade pip
-pip install numpy cython pysam cram pytest coverage jsonschema avro nose
+
+# numpy changed structured dtypes, causing superfluous
+# output, in turn causing CRAM tests to fail
+# remove once h5py has been updated, see also:
+#   https://github.com/h5py/h5py/issues/969
+pip install 'numpy<1.14'
+
+pip install cython pysam cram pytest coverage jsonschema avro nose
 pip install --no-deps git+https://github.com/PacificBiosciences/pbcommand.git
 pip install --no-deps git+https://github.com/PacificBiosciences/pbcore.git
 

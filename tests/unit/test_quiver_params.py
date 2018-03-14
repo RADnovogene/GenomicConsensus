@@ -1,6 +1,7 @@
 #
 # Test aspects of the loading of quiver parameter sets from .ini files
 #
+from __future__ import absolute_import, division, print_function
 
 from nose.tools import assert_equal
 from os.path import dirname as up
