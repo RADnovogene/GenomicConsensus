@@ -48,8 +48,7 @@ echo "## Fetch unanimity \"submodules\""
 ( cd _deps/unanimity \
   && git checkout . \
   && git clean -xdf \
-  && rm -rf third-party/seqan third-party/pbbam third-party/pbcopper \
-  && ln -sfn $PWD/../seqan    third-party/seqan \
+  && rm -rf third-party/pbbam third-party/pbcopper \
   && ln -sfn $PWD/../pbbam    third-party/pbbam \
   && ln -sfn $PWD/../pbcopper third-party/pbcopper )
 # the reason to use $PWD/.. full path is that pip will copy it to /tmp
