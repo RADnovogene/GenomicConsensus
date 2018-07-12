@@ -12,7 +12,6 @@ from ..ResultCollector import ResultCollectorProcess, ResultCollectorThread
 from GenomicConsensus.consensus import Consensus, QuiverConsensus, join
 from GenomicConsensus.windows import kSpannedIntervals, holes, subWindow
 from GenomicConsensus.variants import filterVariants, annotateVariants
-from GenomicConsensus.quiver.evidence import dumpEvidence
 from GenomicConsensus.quiver import diploid
 
 import GenomicConsensus.quiver.model as M
@@ -108,15 +107,6 @@ def consensusAndVariantsForWindow(cmpH5, refWindow, referenceContig,
                 annotateVariants(filteredVars, clippedAlns)
 
             variants += filteredVars
-
-            # Dump?
-            shouldDumpEvidence = \
-                ((options.dumpEvidence == "all") or
-                 (options.dumpEvidence == "variants") and (len(variants) > 0))
-            if shouldDumpEvidence:
-                dumpEvidence(options.evidenceDirectory,
-                             subWin, windowRefSeq,
-                             clippedAlns, css)
         else:
             css = QuiverConsensus.noCallConsensus(quiverConfig.noEvidenceConsensus,
                                                   subWin, intRefSeq)

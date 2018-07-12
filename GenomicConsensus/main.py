@@ -199,11 +199,6 @@ class ToolRunner(object):
             logging.info("Removing %s" % options.temporaryDirectory)
             shutil.rmtree(options.temporaryDirectory, ignore_errors=True)
 
-    def _setupEvidenceDumpDirectory(self, directoryName):
-        if os.path.exists(directoryName):
-            shutil.rmtree(directoryName)
-        os.makedirs(directoryName)
-
     @property
     def aborting(self):
         return self._aborting
@@ -250,8 +245,6 @@ class ToolRunner(object):
         if options.pdbAtStartup:
             ipdb.set_trace()
 
-        #logging.info("h5py version: %s" % h5py.version.version)
-        #logging.info("hdf5 version: %s" % h5py.version.hdf5_version)
         logging.info("ConsensusCore version: %s" %
                      (consensusCoreVersion() or "ConsensusCore unavailable"))
         logging.info("ConsensusCore2 version: %s" %
@@ -279,10 +272,6 @@ class ToolRunner(object):
             #options.disableHdf5ChunkCache = self._shouldDisableChunkCache(peekFile)
             #if options.disableHdf5ChunkCache:
             #    logging.info("Will disable HDF5 chunk cache (large number of datasets)")
-            #logging.debug("After peek, # hdf5 objects open: %d" % h5py.h5f.get_obj_count())
-
-        if options.dumpEvidence:
-            self._setupEvidenceDumpDirectory(options.evidenceDirectory)
 
         self._launchSlaves()
         self._readAlignmentInput()

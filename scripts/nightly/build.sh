@@ -23,13 +23,7 @@ set -vxeuo pipefail
 ## Install pip modules
 pip install --upgrade pip
 
-# numpy changed structured dtypes, causing superfluous
-# output, in turn causing CRAM tests to fail
-# remove once h5py has been updated, see also:
-#   https://github.com/h5py/h5py/issues/969
-pip install 'numpy<1.14'
-
-pip install cython pysam cram pytest coverage jsonschema avro nose
+pip install cython pysam cram pytest coverage jsonschema avro nose numpy
 pip install --no-deps git+https://github.com/PacificBiosciences/pbcommand.git
 pip install --no-deps git+https://github.com/PacificBiosciences/pbcore.git
 
