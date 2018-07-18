@@ -199,16 +199,6 @@ def poaConsensusAndVariants(alnFile, refWindow, referenceContig,
                 annotateVariants(filteredVars, clippedAlns)
 
             variants += filteredVars
-
-            # Dump?
-            shouldDumpEvidence = \
-                ((options.dumpEvidence == "all") or
-                 (options.dumpEvidence == "variants") and (len(variants) > 0))
-            if shouldDumpEvidence:
-                logging.info("POA does not yet support --dumpEvidence")
-#                 dumpEvidence(options.evidenceDirectory,
-#                              subWin, windowRefSeq,
-#                              clippedAlns, css)
         else:
             css = Consensus.noCallConsensus(poaConfig.noEvidenceConsensus,
                                             subWin, intRefSeq)

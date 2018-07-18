@@ -352,16 +352,6 @@ def add_options_to_argument_parser(parser):
         default=False,
         help="Enable Python-level profiling (using cProfile).")
     debugging.add_argument(
-        "--dumpEvidence", "-d",
-        dest="dumpEvidence",
-        nargs="?",
-        default=None,
-        const="variants",
-        choices=["variants", "all", "outliers"])
-    debugging.add_argument(
-        "--evidenceDirectory",
-        default="evidence_dump")
-    debugging.add_argument(
         "--annotateGFF",
         action="store_true",
         help="Augment GFF variant records with additional information")
