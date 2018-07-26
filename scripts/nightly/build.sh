@@ -23,9 +23,9 @@ set -vxeuo pipefail
 ## Install pip modules
 pip install --upgrade pip
 
-pip install cython pysam cram pytest coverage jsonschema avro nose numpy
-pip install --no-deps git+https://github.com/PacificBiosciences/pbcommand.git
-pip install --no-deps git+https://github.com/PacificBiosciences/pbcore.git
+pip install cython pysam cram pytest coverage jsonschema avro nose numpy==1.14.5
+pip install --no-deps http://bitbucket:7990/rest/api/latest/projects/SL/repos/pbcommand/archive?format=zip
+pip install --no-deps http://bitbucket:7990/rest/api/latest/projects/SAT/repos/pbcore/archive?format=zip
 
 ### Get PacBioTestData
 if [ ! -d ../PacBioTestData ]
@@ -42,7 +42,7 @@ fi
 # something meaningful, which means we can't resolve the relative
 # submodules.  Override the remote here.
 ( cd ../unanimity &&
-  git remote set-url origin ssh://git@bitbucket.nanofluidics.com:7999/sat/unanimity.git &&
+  git remote set-url origin ssh://git@bitbucket:7999/sat/unanimity.git &&
   git submodule update --init --remote )
 
 # BUILD
