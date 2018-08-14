@@ -11,7 +11,7 @@ from os.path import join, dirname
 
 setup(
     name='GenomicConsensus',
-    version='2.3.1',  # don't forget to update GenomicConsensus/__init__.py and doc/conf.py too
+    version='2.3.2',  # don't forget to update GenomicConsensus/__init__.py and doc/conf.py too
     author='Pacific Biosciences',
     author_email='devnet@pacificbiosciences.com',
     license=open('LICENSES').read(),
