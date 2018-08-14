@@ -3,9 +3,15 @@ from __future__ import absolute_import, division, print_function
 from setuptools import setup, find_packages
 from os.path import join, dirname
 
+# GenomicConsensus implicitly depends on
+# - ConsensusCore (Quiver/RSII)
+# - ConsensusCore2 (Arrow/Sequel)
+# adding these in 'install_requires' would
+# make integration unnecessarily hard
+
 setup(
     name = 'GenomicConsensus',
-    version='2.2.2', # don't forget to update GenomicConsensus/__init__.py and doc/conf.py too
+    version='2.3.0', # don't forget to update GenomicConsensus/__init__.py and doc/conf.py too
     author='Pacific Biosciences',
     author_email='devnet@pacificbiosciences.com',
     license=open('LICENSES').read(),
@@ -24,8 +30,5 @@ setup(
     install_requires=[
         'pbcore >= 1.2.9',
         'pbcommand >= 0.3.20',
-        'numpy >= 1.6.0',
-        #'ConsensusCore == 1.0.2'
-        # , 'ConsensusCore2 >= 0.9',
-        ]
+        'numpy >= 1.6.0']
     )
