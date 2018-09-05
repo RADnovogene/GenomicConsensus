@@ -1,12 +1,20 @@
-GenomicConsensus (quiver, arrow) [![Circle CI](https://circleci.com/gh/PacificBiosciences/GenomicConsensus.svg?style=svg)](https://circleci.com/gh/PacificBiosciences/GenomicConsensus)
--------------------------
+<h1 align="center"><img src="http://www.pacb.com/wp-content/themes/pacific-biosciences/img/pacific-biosciences-logo-mobile.svg"/></h1>
+<h1 align="center">GenomicConsensus</h1>
+<p align="center">Genome polishing and variant callin.</p>
+
+***
 
 The ``GenomicConsensus`` package provides the ``variantCaller`` tool,
 which allows you to apply the Quiver or Arrow algorithm to mapped
 PacBio reads to get consensus and variant calls.
 
-Background on Quiver and Arrow
-------------------------------
+## Availability
+Latest version can be installed via bioconda package `genomicconsensus`.
+
+Please refer to our [official pbbioconda page](https://github.com/PacificBiosciences/pbbioconda)
+for information on Installation, Support, License, Copyright, and Disclaimer.
+
+## Background on Quiver and Arrow
 
 *Quiver* is the legacy consensus model based on a conditional random
 field approach.  Quiver enables consensus accuracies on genome
@@ -24,13 +32,7 @@ Quiver is supported for PacBio RS data.  Arrow is supported for PacBio
 Sequel data and RS data with the P6-C4 chemistry.
 
 
-Getting GenomicConsensus
-------------------------
-Casual users should get ``GenomicConsensus`` from the
-[SMRTanalysis software bundle](http://www.pacb.com/support/software-downloads/).
-
-
-Running
+## Running
 -------
 Basic usage is as follows:
 
@@ -56,8 +58,7 @@ FASTQ file.
  release of SMRTanalysis 3.0 or build from GitHub sources.*
 
 
-More documentation
-------------------
+## More documentation
 
 - [More detailed installation and running instructions](./doc/HowTo.rst)
 - [FAQ](./doc/FAQ.rst)
