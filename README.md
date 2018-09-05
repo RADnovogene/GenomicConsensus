@@ -1,6 +1,6 @@
 <h1 align="center"><img src="http://www.pacb.com/wp-content/themes/pacific-biosciences/img/pacific-biosciences-logo-mobile.svg"/></h1>
 <h1 align="center">GenomicConsensus</h1>
-<p align="center">Genome polishing and variant callin.</p>
+<p align="center">Genome polishing and variant calling.</p>
 
 ***
 
