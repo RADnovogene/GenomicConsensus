@@ -1,4 +1,4 @@
-include LICENSES
+include LICENSE
 
 # Quiver model definitions
 graft GenomicConsensus/quiver/resources
