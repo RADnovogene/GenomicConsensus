@@ -11,7 +11,7 @@ from .. import reference
 from ..options import options
 from ..consensus import Consensus, join
 from ..windows import kSpannedIntervals, holes, subWindow
-from ..variants import Variant, filterVariants, annotateVariants
+from ..variants import Variant, annotateVariants
 from ..Worker import WorkerProcess, WorkerThread
 from ..ResultCollector import ResultCollectorProcess, ResultCollectorThread
 from ..arrow.utils import variantsFromAlignment
@@ -191,14 +191,11 @@ def poaConsensusAndVariants(alnFile, refWindow, referenceContig,
                     consensusAndVariantsForAlignments(subWin, intRefSeq,
                                                       clippedAlns, poaConfig)
 
-            filteredVars =  filterVariants(options.minCoverage,
-                                           options.minConfidence,
-                                           variants_)
             # Annotate?
             if options.annotateGFF:
-                annotateVariants(filteredVars, clippedAlns)
+                annotateVariants(variants_, clippedAlns)
 
-            variants += filteredVars
+            variants += variants_
         else:
             css = Consensus.noCallConsensus(poaConfig.noEvidenceConsensus,
                                             subWin, intRefSeq)

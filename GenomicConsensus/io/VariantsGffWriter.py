@@ -47,6 +47,9 @@ class VariantsGffWriter(object):
 
     def __init__(self, f, optionsDict, referenceEntries):
         self._gffWriter = GffWriter(f)
+        self._minConfidence = optionsDict["minConfidence"]
+        self._minCoverage = optionsDict["minCoverage"]
+
         self._gffWriter.writeHeader("##pacbio-variant-version 2.1")
         self._gffWriter.writeHeader("##date %s" % time.ctime())
         self._gffWriter.writeHeader("##feature-ontology %s" % self.ONTOLOGY_URL)
@@ -61,7 +64,8 @@ class VariantsGffWriter(object):
 
     def writeVariants(self, variants):
         for var in variants:
-            self._gffWriter.writeRecord(toGffRecord(var))
+            if var.coverage >= self._minCoverage and var.confidence >= self._minConfidence:
+                self._gffWriter.writeRecord(toGffRecord(var))
 
     def close(self):
         self._gffWriter.close()

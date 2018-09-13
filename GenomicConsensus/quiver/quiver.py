@@ -11,7 +11,7 @@ from ..ResultCollector import ResultCollectorProcess, ResultCollectorThread
 
 from GenomicConsensus.consensus import Consensus, QuiverConsensus, join
 from GenomicConsensus.windows import kSpannedIntervals, holes, subWindow
-from GenomicConsensus.variants import filterVariants, annotateVariants
+from GenomicConsensus.variants import annotateVariants
 from GenomicConsensus.quiver import diploid
 
 import GenomicConsensus.quiver.model as M
@@ -99,14 +99,11 @@ def consensusAndVariantsForWindow(cmpH5, refWindow, referenceContig,
                                                     options.aligner,
                                                     mms=None)
 
-            filteredVars =  filterVariants(options.minCoverage,
-                                           options.minConfidence,
-                                           variants_)
             # Annotate?
             if options.annotateGFF:
-                annotateVariants(filteredVars, clippedAlns)
+                annotateVariants(variants_, clippedAlns)
 
-            variants += filteredVars
+            variants += variants_
         else:
             css = QuiverConsensus.noCallConsensus(quiverConfig.noEvidenceConsensus,
                                                   subWin, intRefSeq)

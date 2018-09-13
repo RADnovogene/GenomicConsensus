@@ -21,6 +21,9 @@ class VariantsVcfWriter(object):
 
     def __init__(self, f, optionsDict, referenceEntries):
         self._vcfFile = open(f, "w")
+        self._minConfidence = optionsDict["minConfidence"]
+        self._minCoverage = optionsDict["minCoverage"]
+
         print(dedent('''\
             ##fileformat=VCFv4.3
             ##fileDate={date}
@@ -37,6 +40,21 @@ class VariantsVcfWriter(object):
                 length=entry.length
                 # TODO(lhepler): evaluate adding md5 hexdigest here on large genomes
                 ), file=self._vcfFile)
+
+        # filters
+        self._minConfidenceFilterID = 'q{}'.format(self._minConfidence)
+        if self._minConfidence > 0:
+            print('##FILTER=<ID={id},Description="Quality below {confidence}">'.format(
+                id=self._minConfidenceFilterID,
+                confidence=self._minConfidence
+                ), file=self._vcfFile)
+        self._minCoverageFilterID = 'c{}'.format(self._minCoverage)
+        if self._minCoverage > 0:
+            print('##FILTER=<ID={id},Description="Coverage below {coverage}">'.format(
+                id=self._minCoverageFilterID,
+                coverage=self._minCoverage
+                ), file=self._vcfFile)
+
         print("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO", file=self._vcfFile)
 
     def writeVariants(self, variants):
@@ -79,6 +97,15 @@ class VariantsVcfWriter(object):
             info = "DP={0}".format(var.coverage)
             if freq:
                 info = info + ";" + freq
+
+            # failed filters
+            failedFilters = []
+            if var.confidence < self._minConfidence:
+                failedFilters.append(self._minConfidenceFilterID)
+            if var.coverage < self._minCoverage:
+                failedFilters.append(self._minCoverageFilterID)
+            filterText = ";".join(failedFilters) if failedFilters else "PASS"
+
             print("{chrom}\t{pos}\t{id}\t{ref}\t{alt}\t{qual}\t{filter}\t{info}".format(
                 chrom=reference.idToFullName(var.refId),
                 pos=pos,
@@ -86,7 +113,7 @@ class VariantsVcfWriter(object):
                 ref=ref,
                 alt=alt,
                 qual=var.confidence,
-                filter="PASS",
+                filter=filterText,
                 info=info), file=self._vcfFile)
 
     def close(self):
