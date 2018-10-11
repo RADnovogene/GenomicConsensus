@@ -16,7 +16,7 @@ from __future__ import absolute_import, division, print_function
 import sys, os
 from os.path import dirname, join
 
-__VERSION__ = '2.2.2' # don't forget to update setup.py and GenomicConsensus/__init__.py too
+__VERSION__ = '2.3.2' # don't forget to update setup.py and GenomicConsensus/__init__.py too
 
 
 # If extensions (or modules to document with autodoc) are in another directory,

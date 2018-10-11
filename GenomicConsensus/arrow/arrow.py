@@ -11,7 +11,7 @@ from ..ResultCollector import ResultCollectorProcess, ResultCollectorThread
 
 from GenomicConsensus.consensus import Consensus, ArrowConsensus, join
 from GenomicConsensus.windows import kSpannedIntervals, holes, subWindow
-from GenomicConsensus.variants import filterVariants, annotateVariants
+from GenomicConsensus.variants import annotateVariants
 from GenomicConsensus.arrow import diploid
 from GenomicConsensus.utils import die
 
@@ -99,14 +99,11 @@ def consensusAndVariantsForWindow(alnFile, refWindow, referenceContig,
                                                             options.aligner, ai=None,
                                                             diploid=arrowConfig.polishDiploid)
 
-            filteredVars =  filterVariants(options.minCoverage,
-                                           options.minConfidence,
-                                           variants_)
             # Annotate?
             if options.annotateGFF:
-                annotateVariants(filteredVars, clippedAlns)
+                annotateVariants(variants_, clippedAlns)
 
-            variants += filteredVars
+            variants += variants_
 
             # The nascent consensus sequence might contain ambiguous bases, these
             # need to be removed as software in the wild cannot deal with such
