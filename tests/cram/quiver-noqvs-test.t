@@ -32,6 +32,7 @@ I'm not all that surprised.
   ##reference=file://* (glob)
   ##contig=<ID=5primeEnd,length=156>
   ##contig=<ID=3primeEnd,length=386>
+  ##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth; some reads may have been filtered">
   #CHROM POS ID REF ALT QUAL FILTER INFO
   3primeEnd 295 . TG T 4 PASS DP=92
   3primeEnd 368 . AG A 6 PASS DP=83

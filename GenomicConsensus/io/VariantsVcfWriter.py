@@ -40,6 +40,11 @@ class VariantsVcfWriter(object):
                 length=entry.length
                 # TODO(lhepler): evaluate adding md5 hexdigest here on large genomes
                 ), file=self._vcfFile)
+        print('##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth; some reads may have been filtered">',
+              file=self._vcfFile)
+        if optionsDict["diploid"]:
+            print('##INFO=<ID=AF,Number=A,Type=Float,Description="Allele Frequency">',
+                  file=self._vcfFile)
 
         # filters
         self._minConfidenceFilterID = 'q{}'.format(self._minConfidence)
