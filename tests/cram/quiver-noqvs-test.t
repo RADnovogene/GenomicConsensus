@@ -26,7 +26,7 @@ I'm not all that surprised.
   3primeEnd . deletion 369 369 . . . reference=G;variantSeq=.;coverage=83;confidence=6
 
   $ cat v.vcf | tr '\t' ' '
-  ##fileformat=VCFv4.3
+  ##fileformat=VCFv4.2
   ##fileDate=* (glob)
   ##source=GenomicConsensusV* (glob)
   ##reference=file://* (glob)

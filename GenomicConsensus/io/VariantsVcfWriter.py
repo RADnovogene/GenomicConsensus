@@ -25,7 +25,7 @@ class VariantsVcfWriter(object):
         self._minCoverage = optionsDict["minCoverage"]
 
         print(dedent('''\
-            ##fileformat=VCFv4.3
+            ##fileformat=VCFv4.2
             ##fileDate={date}
             ##source=GenomicConsensusV{version}
             ##reference={reference}''').format(
