@@ -26,12 +26,13 @@ I'm not all that surprised.
   3primeEnd . deletion 369 369 . . . reference=G;variantSeq=.;coverage=83;confidence=6
 
   $ cat v.vcf | tr '\t' ' '
-  ##fileformat=VCFv4.3
+  ##fileformat=VCFv4.2
   ##fileDate=* (glob)
   ##source=GenomicConsensusV* (glob)
   ##reference=file://* (glob)
   ##contig=<ID=5primeEnd,length=156>
   ##contig=<ID=3primeEnd,length=386>
+  ##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth; some reads may have been filtered">
   #CHROM POS ID REF ALT QUAL FILTER INFO
   3primeEnd 295 . TG T 4 PASS DP=92
   3primeEnd 368 . AG A 6 PASS DP=83
