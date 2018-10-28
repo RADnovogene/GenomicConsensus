@@ -35,7 +35,7 @@ since I built the new reference.
   ecoliK12_pbi_March2013 . insertion 1536 1536 . . . reference=.;variantSeq=C;coverage=91;confidence=47
 
   $ cat variants.vcf | untabify
-  ##fileformat=VCFv4.3
+  ##fileformat=VCFv4.2
   ##fileDate=* (glob)
   ##source=GenomicConsensusV* (glob)
   ##reference=file://* (glob)
