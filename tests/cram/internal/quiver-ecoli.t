@@ -40,6 +40,7 @@ since I built the new reference.
   ##source=GenomicConsensusV* (glob)
   ##reference=file://* (glob)
   ##contig=<ID=ecoliK12_pbi_March2013,length=4642522>
+  ##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth; some reads may have been filtered">
   ##FILTER=<ID=q40,Description="Quality below 40">
   ##FILTER=<ID=c5,Description="Coverage below 5">
   #CHROM POS ID REF ALT QUAL FILTER INFO
