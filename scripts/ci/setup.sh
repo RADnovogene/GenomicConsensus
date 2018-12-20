@@ -6,7 +6,7 @@ set -vex
 #########
 
 WHEELHOUSE="/mnt/software/p/python/wheelhouse/develop/"
-pip install --user --find-links=${WHEELHOUSE} coverage h5py nose numpy
+pip install --user --find-links=${WHEELHOUSE} coverage 'h5py<2.9' nose numpy
 
 pip install --user --find-links=${WHEELHOUSE} -e _deps/pbcommand
 pip install --user --find-links=${WHEELHOUSE} -e _deps/pbcore
