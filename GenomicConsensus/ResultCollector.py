@@ -22,16 +22,22 @@ class ResultCollector(object):
 
     def _run(self):
         self.onStart()
-
-        sentinelsReceived = 0
-        while sentinelsReceived < options.numWorkers:
-            result = self._resultsQueue.get()
-            if result is None:
-                sentinelsReceived += 1
-            else:
-                self.onResult(result)
-
-        self.onFinish()
+        try:
+            sentinelsReceived = 0
+            while sentinelsReceived < options.numWorkers:
+                result = self._resultsQueue.get()
+                if result is None:
+                    sentinelsReceived += 1
+                else:
+                    self.onResult(result)
+        finally:
+            # Even on error, we want the files to be closed.
+            # Otherwise, e.g., we could end up with empty .gz files,
+            # which are invalid.
+            # And for debugging, we should see the current state of output.
+            # This will run even on KeyboardInterrupt.
+            self.onFinish()
+        logging.info("Analysis completed.")
 
     def run(self):
         if options.doProfiling:
@@ -80,7 +86,6 @@ class ResultCollector(object):
         self._flushContigIfCompleted(window)
 
     def onFinish(self):
-        logging.info("Analysis completed.")
         if self.fastaWriter: self.fastaWriter.close()
         if self.fastqWriter: self.fastqWriter.close()
         if self.gffWriter:   self.gffWriter.close()
