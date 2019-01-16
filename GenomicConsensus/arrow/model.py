@@ -34,7 +34,7 @@ class ArrowConfig(object):
                  computeConfidence=True,
                  readStumpinessThreshold=0.1,
                  minReadScore=0.75,
-                 minHqRegionSnr=3.75,
+                 minHqRegionSnr=2.5,
                  minZScore=-3.5,
                  minAccuracy=0.82,
                  maskRadius=0,
