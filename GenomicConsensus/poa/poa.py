@@ -32,7 +32,7 @@ class PoaConfig(object):
                  noEvidenceConsensus="nocall",
                  readStumpinessThreshold=0.1,
                  minReadScore=0.75,
-                 minHqRegionSnr=3.75):
+                 minHqRegionSnr=2.5):
         self.aligner                    = aligner
         self.minMapQV                   = minMapQV
         self.minPoaCoverage             = minPoaCoverage
