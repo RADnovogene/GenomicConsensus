@@ -6,7 +6,7 @@ Test Arrow diploid polishing
 
 Run arrow
 
-  $ arrow $INPUT -r $REFERENCE --diploid -o dipl.vcf -o cons.fasta
+  $ arrow $INPUT -r $REFERENCE --diploid -o dipl.vcf -o dipl.gff -o cons.fasta
 
 Perfect diploid polishing, found all variants
 
@@ -28,3 +28,13 @@ Ambiguous-free consensus sequence
   AGTAGGTGCTGTCGAGCGGCAGCTAGCGGTCAATTCTATGACCTCGTTGCGTACTCCGAA
   TCATTGAGCAACCGTCTTTGGTAAATACGAGTTCAGGCAAGCTTGCTGAGGACTAGTAGC
   T
+
+TAG-3610: test that `gffToBed` actually works
+
+  $ gffToBed coverage dipl.gff
+  track name=variants description="PacBio: snps, insertions, and deletions derived from consensus calls against reference" useScore=0
+  all4merDipl	27	28	meanCov	100.000	.
+  all4merDipl	70	71	meanCov	100.000	.
+  all4merDipl	127	128	meanCov	100.000	.
+  all4merDipl	193	194	meanCov	100.000	.
+  all4merDipl	247	248	meanCov	100.000	.
